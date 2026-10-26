@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zeporah Mid-Fidelity Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f3ed;
+      --surface: #fffdfa;
+      --surface-2: #f1ebe2;
+      --surface-3: #ece5da;
+      --surface-accent: #e6efe9;
+      --line: #ddd3c7;
+      --line-strong: #c9bcad;
+      --text: #231d18;
+      --muted: #6f675f;
+      --faint: #9a9187;
+      --primary: #325b55;
+      --primary-soft: #dce8e4;
+      --warning: #7c5a2f;
+      --ink: #141210;
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --shadow-sm: 0 3px 10px rgba(35,29,24,.06);
+      --shadow-md: 0 16px 40px rgba(35,29,24,.09);
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+      --text-xs: 12px; --text-sm: 14px; --text-base: 16px; --text-lg: 19px; --text-xl: 30px;
+      --font-body: 'Inter', Arial, sans-serif;
+      --font-display: 'Fraunces', Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #f7f4ee 0%, #f2ede5 100%);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: 1.5;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr 330px;
+      min-height: 100vh;
+    }
+    .sidebar, .inspector {
+      background: rgba(255,253,250,.72);
+      backdrop-filter: blur(14px);
+      border-right: 1px solid var(--line);
+      padding: var(--space-5);
+      overflow: auto;
+    }
+    .inspector {
+      border-right: none;
+      border-left: 1px solid var(--line);
+    }
+    .canvas {
+      padding: var(--space-8);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .shell {
+      width: min(1200px, 100%);
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .desktop-panel {
+      background: rgba(255,253,250,.88);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow-md);
+      padding: var(--space-5);
+      position: sticky;
+      top: 32px;
+    }
+    .phone {
+      width: 420px;
+      min-height: 880px;
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      border-radius: 34px;
+      box-shadow: var(--shadow-md);
+      padding: 18px;
+      position: relative;
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      background: var(--surface-2);
+      color: var(--muted);
+      margin-bottom: var(--space-4);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--primary); }
+    h1 {
+      margin: 0 0 var(--space-4);
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      line-height: 1.08;
+      font-weight: 600;
+      letter-spacing: -.02em;
+    }
+    h2 { margin: 0 0 var(--space-3); font-size: 18px; }
+    p { margin: 0 0 var(--space-4); color: var(--text); }
+    .muted { color: var(--muted); }
+    .faint { color: var(--faint); }
+    .stack > * + * { margin-top: var(--space-4); }
+    .hero-card, .card, .info-card, .list-card, .note-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-4);
+    }
+    .hero-card {
+      background: linear-gradient(180deg, #fffdfa 0%, #f7f2ea 100%);
+      padding: var(--space-5);
+      border-radius: var(--radius-lg);
+    }
+    .soft-card {
+      background: var(--surface-2);
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+    }
+    .section-label {
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .btns { display: grid; gap: 10px; }
+    .btn, .nav-btn {
+      border: 1px solid var(--line-strong);
+      border-radius: 16px;
+      padding: 14px 16px;
+      background: #fff;
+      color: var(--text);
+      font-size: 15px;
+      text-align: left;
+      cursor: pointer;
+      transition: background .18s ease, transform .18s ease, border-color .18s ease;
+    }
+    .btn:hover, .nav-btn:hover { transform: translateY(-1px); }
+    .btn.primary {
+      background: var(--primary);
+      color: #f7f5f0;
+      border-color: var(--primary);
+    }
+    .btn.secondary { background: var(--surface-2); }
+    .btn.ghost { background: transparent; border-style: dashed; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 12px;
+      border: 1px solid var(--line);
+    }
+    .priority {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: #fff;
+      padding: 16px;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .priority:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--line-strong);
+    }
+    .priority strong { display: block; margin-bottom: 6px; }
+    .field { display: grid; gap: 8px; }
+    .field label {
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+    }
+    .input, .textarea, .select {
+      min-height: 50px;
+      border-radius: 14px;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      padding: 14px;
+      color: var(--text);
+      font-size: 15px;
+    }
+    .textarea { min-height: 120px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin-bottom: 8px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-5);
+      color: var(--muted);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: var(--primary-soft);
+      border: 1px solid #c7d8d2;
+      position: relative;
+    }
+    .mark::before, .mark::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: 8px;
+      border: 1.5px solid var(--primary);
+    }
+    .mark::after { inset: 10px; }
+    .desktop-summary {
+      display: grid;
+      gap: 12px;
+    }
+    .summary-card {
+      border-radius: 18px;
+      background: var(--surface-2);
+      padding: 14px;
+      border: 1px solid transparent;
+    }
+    .footer-nav {
+      position: sticky;
+      bottom: 0;
+      margin-top: var(--space-6);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      background: rgba(255,253,250,.94);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 8px;
+      backdrop-filter: blur(8px);
+    }
+    .footer-nav div {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      padding: 10px 4px;
+      border-radius: 14px;
+    }
+    .footer-nav .active-tab {
+      background: var(--surface-2);
+      color: var(--text);
+      font-weight: 600;
+    }
+    .group-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      margin: 18px 0 10px;
+    }
+    .sidebar h3, .inspector h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+    }
+    .nav { display: grid; gap: 8px; }
+    .nav-btn.active-nav {
+      background: var(--primary-soft);
+      border-color: #bfd0ca;
+      color: var(--text);
+    }
+    .note-item {
+      background: rgba(255,255,255,.75);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .status-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media (max-width: 1220px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar, .inspector { border: none; border-bottom: 1px solid var(--line); }
+      .canvas { padding: 20px; }
+      .shell { grid-template-columns: 1fr; }
+      .desktop-panel { position: relative; top: auto; }
+      .phone { width: min(420px, 100%); }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h3>Prototype map</h3>
+      <div class="group-title">Core journey</div>
+      <div class="nav">
+        <button class="nav-btn active-nav" data-target="welcome">Welcome</button>
+        <button class="nav-btn" data-target="privacy">Privacy overview</button>
+        <button class="nav-btn" data-target="home">Home dashboard</button>
+        <button class="nav-btn" data-target="task">Task detail</button>
+        <button class="nav-btn" data-target="support">Support options</button>
+      </div>
+      <div class="group-title">Collaboration</div>
+      <div class="nav">
+        <button class="nav-btn" data-target="people">People</button>
+        <button class="nav-btn" data-target="invite">Invite helper</button>
+        <button class="nav-btn" data-target="permissions">Permissions</button>
+      </div>
+      <div class="group-title">Private info</div>
+      <div class="nav">
+        <button class="nav-btn" data-target="notes">Private notes</button>
+        <button class="nav-btn" data-target="documents">Documents</button>
+        <button class="nav-btn" data-target="docdetail">Document detail</button>
+      </div>
+      <div class="group-title">Controls</div>
+      <div class="nav">
+        <button class="nav-btn" data-target="settings">Settings</button>
+        <button class="nav-btn" data-target="trust">Trust controls</button>
+        <button class="nav-btn" data-target="sharing">Sharing activity</button>
+      </div>
+    </aside>
+
+    <main class="canvas">
+      <div class="shell">
+        <section class="desktop-panel">
+          <div class="brand-mark">
+            <div class="mark"></div>
+            <div>
+              <div style="font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);">Zeporah</div>
+              <div style="font-size:20px;font-family:var(--font-display);">Quiet strength, made usable.</div>
+            </div>
+          </div>
+          <div style="height:20px"></div>
+          <div class="desktop-summary">
+            <div class="summary-card"><div class="section-label">Current space</div><strong>Mom’s next steps</strong><div class="muted" style="font-size:14px">Recent loss • Georgia</div></div>
+            <div class="summary-card"><div class="section-label">Why this prototype matters</div><div class="muted" style="font-size:14px">Shows trust-first onboarding, guided tasks, support, controlled collaboration, and item-level privacy.</div></div>
+            <div class="summary-card"><div class="section-label">Use this for review</div><div class="muted" style="font-size:14px">Walk founders through the emotional tone, information hierarchy, and permission model before higher-fidelity design.</div></div>
+          </div>
+        </section>
+
+        <section class="phone">
+          <div class="topbar">
+            <div class="brand-mark" style="gap:8px"><div class="mark" style="width:22px;height:22px"></div><span>Zeporah</span></div>
+            <div>Mid-fidelity prototype</div>
+          </div>
+
+          <div id="welcome" class="screen active stack">
+            <div class="eyebrow"><span class="dot"></span> Private by default</div>
+            <div class="hero-card">
+              <h1>A private place to organize what comes next.</h1>
+              <p class="muted">Zeporah helps families move through practical next steps without exposing private information or forcing everything into one overwhelming checklist.</p>
+            </div>
+            <div class="soft-card">
+              <div class="section-label">What this helps with</div>
+              <ul>
+                <li>Know what matters now.</li>
+                <li>Keep notes and documents in one place.</li>
+                <li>Ask for help without oversharing.</li>
+              </ul>
+            </div>
+            <div class="btns">
+              <button class="btn primary next" data-next="privacy">Create a private family space</button>
+              <button class="btn secondary next" data-next="privacy">Learn how privacy works</button>
+              <button class="btn ghost">I already have an account</button>
+            </div>
+          </div>
+
+          <div id="privacy" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Trust model</div>
+            <h1>Your family space stays private unless you choose to share.</h1>
+            <div class="two-col">
+              <div class="info-card"><div class="section-label">You control access</div><strong>People only see what you allow.</strong><p class="muted">Roles and visibility can be adjusted later.</p></div>
+              <div class="info-card"><div class="section-label">Support is consent-based</div><strong>Nothing is sent automatically.</strong><p class="muted">Requests are reviewed before anything leaves your space.</p></div>
+            </div>
+            <div class="card">
+              <div class="section-label">Private by default</div>
+              <div class="row">
+                <div class="chip">Tasks</div>
+                <div class="chip">Notes</div>
+                <div class="chip">Documents</div>
+                <div class="chip">Contacts</div>
+              </div>
+            </div>
+            <div class="btns">
+              <button class="btn primary next" data-next="home">Continue</button>
+              <button class="btn ghost">Read full privacy summary</button>
+            </div>
+          </div>
+
+          <div id="home" class="screen stack">
+            <div class="status-line"><span>Mom’s next steps</span><span>Recent loss</span></div>
+            <h1>You do not need to do everything today.</h1>
+            <p class="muted">Start with a few things that matter now. Everything else can wait until there is more room.</p>
+            <div class="priority next" data-next="task">
+              <div class="section-label">What matters now</div>
+              <strong>Tell the people who need to know</strong>
+              <span class="muted">Start with one update or one call.</span>
+            </div>
+            <div class="priority next" data-next="people">
+              <div class="section-label">Trusted help</div>
+              <strong>Invite someone to help</strong>
+              <span class="muted">Set clear access boundaries before they enter.</span>
+            </div>
+            <div class="priority next" data-next="documents">
+              <div class="section-label">Important information</div>
+              <strong>Keep documents in one place</strong>
+              <span class="muted">Store key forms and records privately.</span>
+            </div>
+            <div class="priority next" data-next="notes">
+              <div class="section-label">Private capture</div>
+              <strong>Write private notes</strong>
+              <span class="muted">Save details without sharing them.</span>
+            </div>
+            <div class="footer-nav"><div class="active-tab">Home</div><div>People</div><div>Tasks</div><div>Support</div><div>Settings</div></div>
+          </div>
+
+          <div id="task" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Task detail</div>
+            <h1>Tell the people who need to know</h1>
+            <div class="row"><div class="chip">Visible to: Only me</div><div class="chip">Due this week</div></div>
+            <div class="card">
+              <div class="section-label">Draft message</div>
+              <p>I wanted to let you know that Mom passed away. I am taking things one step at a time and will share more when I can.</p>
+            </div>
+            <div class="soft-card">
+              <div class="section-label">Gentle guidance</div>
+              <p class="muted">You do not need to notify everyone at once. Starting with one person is enough for now.</p>
+            </div>
+            <div class="btns">
+              <button class="btn primary">Mark complete</button>
+              <button class="btn secondary">Ask someone to help</button>
+              <button class="btn ghost next" data-next="support">I need help with this</button>
+            </div>
+          </div>
+
+          <div id="support" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Support options</div>
+            <h1>Support that may help right now.</h1>
+            <p class="muted">These options are shown because you asked for help. Nothing is shared unless you choose to send a request.</p>
+            <div class="list-card">
+              <div class="section-label">Bereavement support</div>
+              <strong>Emotional support and grief conversation</strong>
+              <p class="muted">A connection can be requested without sharing your notes, tasks, or documents.</p>
+              <div class="btns"><button class="btn primary">Request connection</button><button class="btn ghost">Contact independently</button></div>
+            </div>
+            <div class="list-card">
+              <div class="section-label">Practical caregiver support</div>
+              <strong>Help with next steps and responsibilities</strong>
+              <p class="muted">Useful when tasks feel too hard to sort through alone.</p>
+            </div>
+          </div>
+
+          <div id="people" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Collaboration</div>
+            <h1>People in this family space.</h1>
+            <p class="muted">Invite only the people who should help, then set what they can see before they join.</p>
+            <div class="card">
+              <div class="section-label">Coordinator</div>
+              <strong>You</strong>
+              <p class="muted">Full control over tasks, documents, privacy defaults, and sharing decisions.</p>
+            </div>
+            <div class="card next" data-next="permissions">
+              <div class="section-label">Helper</div>
+              <strong>Aunt Lisa</strong>
+              <p class="muted">Can see selected tasks and shared updates only.</p>
+            </div>
+            <div class="btns">
+              <button class="btn primary next" data-next="invite">Invite someone</button>
+              <button class="btn ghost">Review pending invites</button>
+            </div>
+            <div class="footer-nav"><div>Home</div><div class="active-tab">People</div><div>Tasks</div><div>Support</div><div>Settings</div></div>
+          </div>
+
+          <div id="invite" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Invite helper</div>
+            <h1>Invite someone without opening the whole space.</h1>
+            <div class="field"><label>Name</label><div class="input">Aunt Lisa</div></div>
+            <div class="field"><label>Email or phone</label><div class="input">lisa@example.com</div></div>
+            <div class="field"><label>Role</label><div class="select">Helper</div></div>
+            <div class="field"><label>Access summary</label><div class="textarea">Selected tasks, shared updates, and support coordination only.</div></div>
+            <div class="btns"><button class="btn primary next" data-next="permissions">Review permissions</button><button class="btn ghost">Save draft invite</button></div>
+          </div>
+
+          <div id="permissions" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Person permissions</div>
+            <h1>Aunt Lisa can help without seeing everything.</h1>
+            <div class="soft-card">
+              <ul>
+                <li>Can see selected tasks.</li>
+                <li>Can receive shared updates.</li>
+                <li>Cannot see private notes.</li>
+                <li>Cannot see private documents.</li>
+                <li>Cannot invite other people.</li>
+              </ul>
+            </div>
+            <div class="btns"><button class="btn secondary">Adjust access</button><button class="btn primary next" data-next="people">Done</button></div>
+          </div>
+
+          <div id="notes" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Private notes</div>
+            <h1>Keep personal notes separate from shared work.</h1>
+            <div class="note-card"><div class="section-label">Funeral home follow-up</div><p>Need to ask about paperwork timing and copies.</p><span class="faint">Visible only to you</span></div>
+            <div class="note-card"><div class="section-label">Medication question</div><p>Call doctor’s office Monday morning.</p><span class="faint">Visible only to you</span></div>
+            <div class="btns"><button class="btn primary">New private note</button><button class="btn ghost next" data-next="home">Back to home</button></div>
+            <div class="footer-nav"><div>Home</div><div>People</div><div>Tasks</div><div>Support</div><div class="active-tab">Notes</div></div>
+          </div>
+
+          <div id="documents" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Documents</div>
+            <h1>Keep essential documents together.</h1>
+            <p class="muted">Documents start private, then can be shared one item at a time.</p>
+            <div class="list-card next" data-next="docdetail">
+              <div class="section-label">Private</div>
+              <strong>Death certificate request form</strong>
+              <p class="muted">Uploaded today • related to records and official next steps</p>
+            </div>
+            <div class="list-card">
+              <div class="section-label">Private</div>
+              <strong>Insurance policy summary</strong>
+              <p class="muted">Uploaded yesterday • not shared</p>
+            </div>
+            <div class="btns"><button class="btn primary">Upload document</button><button class="btn ghost next" data-next="home">Back to home</button></div>
+          </div>
+
+          <div id="docdetail" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Document detail</div>
+            <h1>Death certificate request form</h1>
+            <div class="card"><div class="section-label">Visibility</div><strong>Private</strong><p class="muted">Only you can see this right now.</p></div>
+            <div class="card"><div class="section-label">Use</div><strong>Records and official next steps</strong><p class="muted">This item can be shared later without exposing unrelated documents.</p></div>
+            <div class="btns"><button class="btn secondary">Share access</button><button class="btn ghost next" data-next="documents">Back to documents</button></div>
+          </div>
+
+          <div id="settings" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Settings</div>
+            <h1>Adjust the experience without losing control.</h1>
+            <div class="list-card"><div class="section-label">Account</div><strong>Sign-in and verification</strong><p class="muted">Email, password, and identity confirmation settings.</p></div>
+            <div class="list-card"><div class="section-label">Experience</div><strong>Language and reminders</strong><p class="muted">Text size, explanation style, and reminder frequency.</p></div>
+            <div class="list-card next" data-next="trust"><div class="section-label">Trust & privacy</div><strong>Visibility defaults and sharing approvals</strong><p class="muted">Review what stays private and what needs confirmation.</p></div>
+            <div class="list-card next" data-next="sharing"><div class="section-label">Sharing activity</div><strong>Review what left the space</strong><p class="muted">See requests and invites that involved sharing.</p></div>
+            <div class="footer-nav"><div>Home</div><div>People</div><div>Tasks</div><div>Support</div><div class="active-tab">Settings</div></div>
+          </div>
+
+          <div id="trust" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Trust controls</div>
+            <h1>Private by default, with clear exceptions.</h1>
+            <div class="soft-card">
+              <ul>
+                <li>New tasks start private.</li>
+                <li>Notes start private.</li>
+                <li>Documents start private.</li>
+                <li>Support requests require review before sending.</li>
+                <li>Helpers cannot invite other people by default.</li>
+              </ul>
+            </div>
+            <div class="btns"><button class="btn secondary">Change default visibility</button><button class="btn primary next" data-next="settings">Done</button></div>
+          </div>
+
+          <div id="sharing" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Sharing activity</div>
+            <h1>See what was shared and when.</h1>
+            <div class="list-card"><div class="section-label">Support request shared</div><strong>Bereavement support request</strong><p class="muted">Today • approved by you • private notes were not included</p></div>
+            <div class="list-card"><div class="section-label">Invite sent</div><strong>Aunt Lisa invited as Helper</strong><p class="muted">Today • limited access • awaiting acceptance</p></div>
+            <div class="soft-card"><p class="muted">Private items that never left the space do not appear here.</p></div>
+            <div class="btns"><button class="btn primary next" data-next="settings">Back to settings</button></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="inspector">
+      <h3>Review notes</h3>
+      <div id="notes"></div>
+    </aside>
+  </div>
+
+  <script>
+    const notesMap = {
+      welcome: ['Introduces the brand tone with warmth and restraint.', 'The primary message is privacy plus guidance, not productivity.', 'Useful for testing emotional first impression.'],
+      privacy: ['Moves trust language into clearer product rules.', 'Shows item categories rather than abstract claims.', 'Sets the boundary model early.'],
+      home: ['Acts as the core MVP hub.', 'Uses strong hierarchy for the four product pillars.', 'Good candidate for the first usability review.'],
+      task: ['Shows the humane tone inside actual work.', 'Balances action and emotional relief.', 'Demonstrates private-by-default at task level.'],
+      support: ['Positions support as optional and consent-based.', 'Separates support discovery from automatic routing.', 'Important for trust differentiation.'],
+      people: ['Makes collaboration explicit instead of hidden in settings.', 'Frames access as bounded by role and item visibility.', 'Core to co-coordinator and helper expansion later.'],
+      invite: ['Shows how Zeporah invites help without opening the full workspace.', 'Permission scope is visible before send.', 'Could evolve into step-by-step invite wizard later.'],
+      permissions: ['Communicates least-privilege clearly.', 'Strong trust artifact for stakeholder review.', 'Useful for future admin logic.'],
+      notes: ['Protects emotional and operational privacy.', 'Important to show notes as separate from shared coordination.', 'Supports the core product promise.'],
+      documents: ['Makes documents a first-class private object.', 'Supports scanning, storage, and later sharing.', 'Likely high-value for MVP credibility.'],
+      docdetail: ['Demonstrates item-level sharing control.', 'Helps investors and collaborators see the privacy model in practice.', 'Could later include file preview and annotations.'],
+      settings: ['Collects operational preferences in one hub.', 'Bridges user preferences with trust controls.', 'Good anchor for future account management.'],
+      trust: ['Turns brand promise into configurable controls.', 'Key differentiator for users who need dignity and safety.', 'Supports auditability and confidence.'],
+      sharing: ['Adds visible accountability for outbound actions.', 'Reinforces that not everything is shared.', 'Important for transparency story.']
+    };
+
+    const screens = document.querySelectorAll('.screen');
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const nextButtons = document.querySelectorAll('.next');
+    const notes = document.getElementById('notes');
+
+    function renderNotes(id) {
+      const entries = notesMap[id] || [];
+      notes.innerHTML = entries.map(item => `<div class="note-item"><p class="muted" style="margin:0">${item}</p></div>`).join('');
+    }
+
+    function showScreen(id) {
+      screens.forEach(screen => screen.classList.toggle('active', screen.id === id));
+      navButtons.forEach(btn => btn.classList.toggle('active-nav', btn.dataset.target === id));
+      renderNotes(id);
+    }
+
+    navButtons.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.target)));
+    nextButtons.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.next)));
+    renderNotes('welcome');
+  </script>
+</body>
+</html>

@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zeporah High Fidelity Concept</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --surface: #fffdfa;
+      --surface-2: #f8f4ed;
+      --surface-3: #f1ebe2;
+      --surface-4: #e8dfd2;
+      --surface-5: #ded2c3;
+      --ink: #231d18;
+      --muted: #70675d;
+      --faint: #9a9085;
+      --primary: #285c59;
+      --primary-2: #2f746f;
+      --primary-soft: #d9ebe7;
+      --primary-soft-2: #edf5f2;
+      --accent: #a16c46;
+      --accent-soft: #f1e1d4;
+      --success: #51784d;
+      --success-soft: #e0eadc;
+      --warning: #8d5b34;
+      --warning-soft: #f3e4d5;
+      --danger: #91515a;
+      --danger-soft: #f3e0e3;
+      --line: rgba(54, 41, 29, 0.11);
+      --line-strong: rgba(54, 41, 29, 0.18);
+      --shadow-sm: 0 10px 24px rgba(33,25,21,.06);
+      --shadow-md: 0 28px 60px rgba(33,25,21,.09);
+      --shadow-lg: 0 36px 80px rgba(33,25,21,.12);
+      --radius-sm: 14px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --radius-xl: 36px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px;
+      --text-xs: 12px; --text-sm: 14px; --text-base: 16px; --text-lg: 20px; --text-xl: 30px; --text-2xl: 42px; --text-3xl: 56px;
+      --font-body: 'Inter', Arial, sans-serif;
+      --font-display: 'Fraunces', Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(217,235,231,.7), transparent 32%),
+        radial-gradient(circle at top right, rgba(241,225,212,.45), transparent 30%),
+        linear-gradient(180deg, #faf7f2 0%, #f2ede6 100%);
+      min-height: 100vh;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr 340px;
+      min-height: 100vh;
+    }
+    .panel {
+      background: rgba(255,253,250,.72);
+      backdrop-filter: blur(18px);
+      border-right: 1px solid var(--line);
+      padding: 24px;
+      overflow: auto;
+    }
+    .panel.right { border-right: none; border-left: 1px solid var(--line); }
+    .canvas {
+      padding: 28px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .workspace {
+      width: min(1460px, 100%);
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+    }
+    .project-card {
+      background: rgba(255,253,250,.88);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      box-shadow: var(--shadow-md);
+      padding: 24px;
+      position: sticky;
+      top: 28px;
+      align-self: start;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, var(--primary-soft) 0%, #c8ddd8 100%);
+      border: 1px solid rgba(40,92,89,.16);
+      position: relative;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.65);
+    }
+    .logo-mark::before,
+    .logo-mark::after {
+      content: "";
+      position: absolute;
+      border-radius: 12px;
+      border: 1.5px solid var(--primary);
+    }
+    .logo-mark::before { inset: 8px; }
+    .logo-mark::after { inset: 13px; border-radius: 8px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--primary-soft-2);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+    h1, h2, h3, h4 { margin: 0; }
+    h1 {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      line-height: 1.04;
+      letter-spacing: -.03em;
+      margin-bottom: 12px;
+    }
+    .hero-title { font-size: var(--text-3xl); max-width: 11ch; }
+    p { margin: 0; }
+    .muted { color: var(--muted); }
+    .faint { color: var(--faint); }
+    .stack > * + * { margin-top: 14px; }
+    .section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .chip-row, .device-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .mini-stat {
+      background: var(--surface-2);
+      border-radius: 18px;
+      border: 1px solid rgba(54,41,29,.06);
+      padding: 16px;
+    }
+    .mini-stat strong { display: block; margin-bottom: 4px; }
+    .btn, .nav-btn, .device-tab {
+      appearance: none;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 16px;
+      padding: 13px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+      text-align: left;
+      width: 100%;
+    }
+    .btn:hover, .nav-btn:hover, .device-tab:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    .btn.primary { background: linear-gradient(180deg, var(--primary-2) 0%, var(--primary) 100%); color: #f7f5f0; border-color: rgba(40,92,89,.4); }
+    .btn.secondary { background: var(--surface-2); }
+    .btn.ghost { background: transparent; border-style: dashed; }
+    .btn.danger { background: var(--danger-soft); }
+    .btn-row { display: grid; gap: 10px; }
+    .nav-group { margin-top: 18px; }
+    .nav-label {
+      margin-bottom: 10px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+    }
+    .nav { display: grid; gap: 10px; }
+    .nav-btn.active { background: var(--primary-soft); border-color: rgba(40,92,89,.24); }
+    .prototype-shell.desktop .view-desktop,
+    .prototype-shell.tablet .view-tablet,
+    .prototype-shell.mobile .view-mobile { display: block; }
+    .prototype-shell.desktop .view-tablet,
+    .prototype-shell.desktop .view-mobile,
+    .prototype-shell.tablet .view-desktop,
+    .prototype-shell.tablet .view-mobile,
+    .prototype-shell.mobile .view-desktop,
+    .prototype-shell.mobile .view-tablet { display: none; }
+    .frame {
+      background: rgba(255,253,250,.84);
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      padding: 20px;
+      box-shadow: var(--shadow-lg);
+      display: none;
+    }
+    .view-desktop { min-height: 900px; }
+    .view-tablet { min-height: 920px; }
+    .view-mobile { min-height: 920px; width: 430px; margin: 0 auto; }
+    .frame.active-frame { display: block; }
+    .window-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .desktop-app {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr) 320px;
+      gap: 18px;
+      min-height: 800px;
+    }
+    .rail, .main, .side {
+      background: linear-gradient(180deg, rgba(255,255,255,.96) 0%, rgba(249,245,239,.96) 100%);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 18px;
+    }
+    .rail-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 14px;
+      border-radius: 16px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+    .rail-item.active { background: var(--surface-2); color: var(--ink); border-color: var(--line); }
+    .hero-card {
+      background: linear-gradient(180deg, #fffdfa 0%, #f6f0e6 100%);
+      border-radius: 30px;
+      border: 1px solid rgba(54,41,29,.09);
+      padding: 28px;
+      box-shadow: var(--shadow-md);
+    }
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+    .kpi {
+      background: var(--surface-2);
+      border: 1px solid rgba(54,41,29,.06);
+      border-radius: 20px;
+      padding: 16px;
+    }
+    .content-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; margin-top: 14px; }
+    .card, .soft-card, .priority-card, .timeline-card, .callout, .list-item {
+      border-radius: 22px;
+      padding: 18px;
+      border: 1px solid var(--line);
+    }
+    .card { background: #fff; box-shadow: var(--shadow-sm); }
+    .soft-card { background: var(--surface-2); border-color: rgba(54,41,29,.06); }
+    .priority-card { background: linear-gradient(180deg, var(--primary-soft-2) 0%, #e4efec 100%); border-color: rgba(40,92,89,.12); }
+    .timeline-card { background: #fff; }
+    .callout { background: var(--warning-soft); border-color: rgba(141,91,52,.16); }
+    .danger-card { background: var(--danger-soft); border: 1px solid rgba(145,81,90,.18); border-radius: 22px; padding: 18px; }
+    .success-card { background: var(--success-soft); border: 1px solid rgba(81,120,77,.14); border-radius: 22px; padding: 18px; }
+    .field { display: grid; gap: 8px; }
+    .field label { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    .input, .select, .textarea {
+      min-height: 52px;
+      padding: 15px 16px;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid var(--line-strong);
+      font: inherit;
+      color: inherit;
+    }
+    .textarea { min-height: 124px; resize: none; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .divider { height: 1px; background: var(--line); margin: 16px 0; }
+    .timeline { display: grid; gap: 12px; }
+    .timeline-item { display: grid; grid-template-columns: 20px 1fr; gap: 12px; }
+    .timeline-dot { width: 12px; height: 12px; border-radius: 999px; background: var(--primary); margin-top: 6px; box-shadow: 0 0 0 4px rgba(217,235,231,.7); }
+    .timeline-item.pending .timeline-dot { background: #cdbba5; box-shadow: 0 0 0 4px rgba(241,225,212,.8); }
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 16px;
+    }
+    .mobile-flow { display: grid; gap: 14px; }
+    .mobile-card {
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .mobile-tabbar {
+      position: sticky;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      background: rgba(255,253,250,.96);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 8px;
+      backdrop-filter: blur(10px);
+    }
+    .mobile-tabbar div {
+      text-align: center;
+      padding: 11px 4px;
+      border-radius: 16px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .mobile-tabbar .active-tab { background: var(--primary-soft-2); color: var(--ink); font-weight: 600; }
+    .tablet-app {
+      display: grid;
+      gap: 16px;
+      min-height: 850px;
+    }
+    .tablet-header-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; }
+    .tablet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .prompt-card, .crit-card {
+      background: rgba(255,255,255,.8);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin-bottom: 8px; }
+    @media (max-width: 1280px) {
+      .layout { grid-template-columns: 1fr; }
+      .panel, .panel.right { border: none; border-bottom: 1px solid var(--line); }
+      .workspace { grid-template-columns: 1fr; }
+      .project-card { position: relative; top: auto; }
+      .canvas { padding: 20px; }
+    }
+    @media (max-width: 900px) {
+      .frame.view-desktop, .frame.view-tablet { display: none !important; }
+      .prototype-shell .view-mobile { display: block !important; width: min(430px, 100%); }
+      .workspace { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="panel left panel">
+      <div class="logo">
+        <div class="logo-mark"></div>
+        <div>
+          <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Zeporah</div>
+          <div style="font-family:var(--font-display);font-size:22px">High-fidelity concept system.</div>
+        </div>
+      </div>
+      <div style="height:22px"></div>
+      <div class="eyebrow">Quiet strength system</div>
+      <p class="muted" style="margin-bottom:18px">A polished concept that clarifies tone, hierarchy, trust patterns, and responsive behavior across the product.</p>
+      <div class="chip-row" style="margin-bottom:18px">
+        <div class="chip">Warm neutral base</div>
+        <div class="chip">Teal trust accent</div>
+        <div class="chip">Fraunces + Inter</div>
+      </div>
+      <div class="three-col" style="margin-bottom:18px">
+        <div class="mini-stat"><strong>4</strong><span class="faint">Core surfaces</span></div>
+        <div class="mini-stat"><strong>3</strong><span class="faint">Device modes</span></div>
+        <div class="mini-stat"><strong>10+</strong><span class="faint">Product states</span></div>
+      </div>
+      <div class="device-tabs" style="margin-bottom:22px">
+        <button class="device-tab active" data-device="desktop">Desktop</button>
+        <button class="device-tab" data-device="tablet">Tablet</button>
+        <button class="device-tab" data-device="mobile">Mobile</button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Primary screens</div>
+        <div class="nav">
+          <button class="nav-btn active" data-screen="dashboard">Dashboard</button>
+          <button class="nav-btn" data-screen="permissions">People & permissions</button>
+          <button class="nav-btn" data-screen="support">Support request</button>
+          <button class="nav-btn" data-screen="documents">Documents</button>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Important states</div>
+        <div class="nav">
+          <button class="nav-btn" data-screen="denied">Denied request</button>
+          <button class="nav-btn" data-screen="expired">Expired invite</button>
+          <button class="nav-btn" data-screen="resume">Return onboarding</button>
+          <button class="nav-btn" data-screen="offline">Offline & sync</button>
+          <button class="nav-btn" data-screen="urgent">Urgent help</button>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Testing scenarios</div>
+        <div class="nav">
+          <button class="nav-btn" data-screen="test1">Testing task 1</button>
+          <button class="nav-btn" data-screen="test2">Testing task 2</button>
+          <button class="nav-btn" data-screen="test3">Testing task 3</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="canvas">
+      <div class="workspace">
+        <section class="project-card stack">
+          <div>
+            <div class="section-title">Visual system</div>
+            <h2 style="font-family:var(--font-display);font-size:30px;line-height:1.12">Calm, premium, and emotionally steady.</h2>
+          </div>
+          <div class="soft-card">
+            <div class="section-title">Principles</div>
+            <ul>
+              <li>Primary actions are obvious, but never aggressive.</li>
+              <li>Private content is clearly bounded and intentionally shared.</li>
+              <li>The layout expands with confidence on larger screens.</li>
+            </ul>
+          </div>
+          <div class="priority-card">
+            <div class="section-title">Type pairing</div>
+            <strong style="display:block;margin-bottom:6px">Fraunces for reassurance.</strong>
+            <p class="muted">Inter handles structure, controls, and dense product content.</p>
+          </div>
+          <div class="soft-card">
+            <div class="section-title">Color behavior</div>
+            <p class="muted">Teal signals trust and action. Warm parchment surfaces reduce coldness. Clay and rose tones carry caution and sensitive-state messaging.</p>
+          </div>
+        </section>
+
+        <section class="prototype-shell desktop">
+          <div class="frame view-desktop active-frame" id="frame-desktop">
+            <div class="window-top"><div class="logo"><div class="logo-mark" style="width:28px;height:28px"></div><span>Zeporah desktop concept</span></div><div>Responsive view</div></div>
+
+            <div class="screen active-screen" data-screen="dashboard">
+              <div class="desktop-app">
+                <aside class="rail">
+                  <div class="rail-item active">Home <span>3</span></div>
+                  <div class="rail-item">People <span>1</span></div>
+                  <div class="rail-item">Tasks</div>
+                  <div class="rail-item">Support</div>
+                  <div class="rail-item">Documents</div>
+                  <div class="rail-item">Settings</div>
+                </aside>
+                <section class="main stack">
+                  <div class="eyebrow">Home overview</div>
+                  <h1 class="hero-title">You can move one step at a time.</h1>
+                  <p class="muted" style="max-width:56ch">The home surface is designed to lower cognitive load, show what matters now, and keep sensitive materials present but contained.</p>
+                  <div class="hero-card">
+                    <div class="section-title">What matters now</div>
+                    <div style="display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap">
+                      <div>
+                        <h3 style="font-size:26px;font-family:var(--font-display);margin-bottom:6px">Tell the people who need to know.</h3>
+                        <p class="muted" style="max-width:40ch">Zeporah narrows the first next step to one manageable action instead of presenting every task at once.</p>
+                      </div>
+                      <div style="min-width:220px">
+                        <button class="btn primary" data-goto="test1">Open guided task</button>
+                      </div>
+                    </div>
+                    <div class="kpi-grid">
+                      <div class="kpi"><div class="section-title">Priority tasks</div><strong style="font-size:22px">3</strong><span class="muted">One now, two later.</span></div>
+                      <div class="kpi"><div class="section-title">Shared helpers</div><strong style="font-size:22px">1</strong><span class="muted">Aunt Lisa invited.</span></div>
+                      <div class="kpi"><div class="section-title">Private docs</div><strong style="font-size:22px">2</strong><span class="muted">Not shared by default.</span></div>
+                    </div>
+                  </div>
+                  <div class="content-grid">
+                    <div class="card">
+                      <div class="section-title">Suggested path</div>
+                      <div class="timeline">
+                        <div class="timeline-item"><div class="timeline-dot"></div><div><strong>Notify close family</strong><div class="muted">Start with one short update.</div></div></div>
+                        <div class="timeline-item"><div class="timeline-dot"></div><div><strong>Review practical tasks</strong><div class="muted">Only after communication is underway.</div></div></div>
+                        <div class="timeline-item pending"><div class="timeline-dot"></div><div><strong>Handle documents later</strong><div class="muted">Saved for when you are ready.</div></div></div>
+                      </div>
+                    </div>
+                    <div class="soft-card">
+                      <div class="section-title">Recent reassurance</div>
+                      <p class="muted">This concept emphasizes a high-trust product tone: visible privacy boundaries, restrained accents, and enough air to prevent the interface from feeling clinical or bureaucratic.</p>
+                    </div>
+                  </div>
+                </section>
+                <aside class="side stack">
+                  <div class="status-bar">
+                    <div>
+                      <div class="section-title">Today</div>
+                      <strong>Calm mode on</strong>
+                    </div>
+                    <div class="chip">Private by default</div>
+                  </div>
+                  <div class="card">
+                    <div class="section-title">Saved for later</div>
+                    <strong>Estate paperwork</strong>
+                    <p class="muted">Deferred without losing place.</p>
+                  </div>
+                  <div class="card">
+                    <div class="section-title">Support</div>
+                    <strong>No request sent</strong>
+                    <p class="muted">You decide what gets shared before asking for help.</p>
+                  </div>
+                </aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="permissions">
+              <div class="desktop-app">
+                <aside class="rail">
+                  <div class="rail-item">Home</div>
+                  <div class="rail-item active">People</div>
+                  <div class="rail-item">Tasks</div>
+                  <div class="rail-item">Support</div>
+                  <div class="rail-item">Documents</div>
+                  <div class="rail-item">Settings</div>
+                </aside>
+                <section class="main stack">
+                  <div class="eyebrow">People & permissions</div>
+                  <h1>Invite support without exposing everything.</h1>
+                  <p class="muted">The permissions model is item-based and explicit. Helpers see only what you intend them to see.</p>
+                  <div class="two-col">
+                    <div class="card"><div class="section-title">Coordinator</div><strong>You</strong><p class="muted">Can manage tasks, documents, and support settings.</p></div>
+                    <div class="card"><div class="section-title">Helper</div><strong>Aunt Lisa</strong><p class="muted">Can view assigned tasks and approved updates.</p></div>
+                  </div>
+                  <div class="priority-card">
+                    <div class="section-title">Visible boundaries</div>
+                    <ul>
+                      <li>Private reflections never leave your view.</li>
+                      <li>Document access requires explicit approval.</li>
+                      <li>Invitees cannot bring in other people unless granted organizer access.</li>
+                    </ul>
+                  </div>
+                </section>
+                <aside class="side stack">
+                  <div class="card"><div class="section-title">Invite status</div><strong>Pending acceptance</strong><p class="muted">Sent 52 minutes ago by text link.</p></div>
+                  <div class="soft-card"><div class="section-title">Trust moment</div><p class="muted">Participants should understand the permission model without reading long help copy.</p></div>
+                </aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="support">
+              <div class="desktop-app">
+                <aside class="rail">
+                  <div class="rail-item">Home</div>
+                  <div class="rail-item">People</div>
+                  <div class="rail-item">Tasks</div>
+                  <div class="rail-item active">Support</div>
+                  <div class="rail-item">Documents</div>
+                  <div class="rail-item">Settings</div>
+                </aside>
+                <section class="main stack">
+                  <div class="eyebrow">Support request</div>
+                  <h1>Ask for support with clarity before you submit.</h1>
+                  <div class="two-col">
+                    <div class="card stack">
+                      <div class="field"><label>What kind of help would feel most useful?</label><div class="select">Emotional support and guidance</div></div>
+                      <div class="field"><label>What would you like the supporter to know?</label><div class="textarea">I need help understanding what comes next and what I can safely delay.</div></div>
+                    </div>
+                    <div class="priority-card stack">
+                      <div class="section-title">Review before sending</div>
+                      <div class="status-bar"><span>Message summary</span><strong>Shared</strong></div>
+                      <div class="status-bar"><span>Your private notes</span><strong>Not shared</strong></div>
+                      <div class="status-bar"><span>Selected documents</span><strong>None shared</strong></div>
+                      <button class="btn primary" data-goto="test3">Send request</button>
+                    </div>
+                  </div>
+                </section>
+                <aside class="side stack">
+                  <div class="soft-card"><div class="section-title">Trust affordance</div><p class="muted">The review panel should do more trust work than help text. It explains exactly what crosses the boundary.</p></div>
+                </aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="documents">
+              <div class="desktop-app">
+                <aside class="rail">
+                  <div class="rail-item">Home</div>
+                  <div class="rail-item">People</div>
+                  <div class="rail-item">Tasks</div>
+                  <div class="rail-item">Support</div>
+                  <div class="rail-item active">Documents</div>
+                  <div class="rail-item">Settings</div>
+                </aside>
+                <section class="main stack">
+                  <div class="eyebrow">Documents</div>
+                  <h1>Store essentials in one calm place.</h1>
+                  <div class="two-col">
+                    <div class="card"><div class="section-title">Private</div><strong>Insurance policy summary</strong><p class="muted">Uploaded yesterday. Not visible to helpers.</p></div>
+                    <div class="card"><div class="section-title">Private</div><strong>Death certificate request notes</strong><p class="muted">Draft information only.</p></div>
+                  </div>
+                  <div class="callout"><strong>Item-level sharing.</strong> <span class="muted">Users do not have to mentally map a whole workspace permission system before sharing one document.</span></div>
+                </section>
+                <aside class="side stack">
+                  <div class="card"><div class="section-title">Recent request</div><strong>Aunt Lisa requested access</strong><p class="muted">Insurance policy summary</p></div>
+                  <button class="btn secondary" data-goto="denied">Review request</button>
+                </aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="denied">
+              <div class="stack">
+                <div class="eyebrow">Denied request</div>
+                <h1>You kept this document private.</h1>
+                <div class="callout"><p>The request was declined. Nothing new was shared, and Aunt Lisa will continue seeing only the materials already approved.</p></div>
+                <div class="two-col">
+                  <div class="card"><div class="section-title">What happened</div><p class="muted">The product confirms the decision plainly and avoids guilt-inducing language.</p></div>
+                  <div class="soft-card"><div class="section-title">Next actions</div><ul><li>Keep current access as-is.</li><li>Share a different document instead.</li><li>Add a short explanation later if needed.</li></ul></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="expired">
+              <div class="stack">
+                <div class="eyebrow">Expired invite</div>
+                <h1>The invite link is no longer active.</h1>
+                <div class="callout"><p>The original invite expired after 7 days. Zeporah preserves the intended permission scope, so resending does not require repeating the setup work.</p></div>
+                <div class="btn-row"><button class="btn primary">Resend invite</button><button class="btn ghost">Cancel invite</button></div>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="resume">
+              <div class="stack">
+                <div class="eyebrow">Return onboarding</div>
+                <h1>Resume setup where you left off.</h1>
+                <div class="success-card"><p>Your progress was saved privately. You can continue from your last completed step or restart if your situation has changed.</p></div>
+                <div class="timeline-card">
+                  <div class="timeline">
+                    <div class="timeline-item"><div class="timeline-dot"></div><div><strong>Privacy overview completed</strong><div class="muted">Yesterday at 8:12 PM</div></div></div>
+                    <div class="timeline-item"><div class="timeline-dot"></div><div><strong>Family context added</strong><div class="muted">Yesterday at 8:19 PM</div></div></div>
+                    <div class="timeline-item pending"><div class="timeline-dot"></div><div><strong>Workspace defaults remaining</strong><div class="muted">Still left to finish.</div></div></div>
+                  </div>
+                </div>
+                <div class="btn-row"><button class="btn primary">Resume</button><button class="btn secondary">Review completed steps</button></div>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="offline">
+              <div class="stack">
+                <div class="eyebrow">Offline state</div>
+                <h1>Your connection dropped, but your work is safe.</h1>
+                <div class="callout"><p>Zeporah keeps the tone calm even in disruption states. The message focuses on data safety first, then on what will happen when connection returns.</p></div>
+                <div class="status-bar"><span>Latest edit</span><strong>Saved on this device</strong></div>
+                <div class="status-bar"><span>Sync status</span><strong>Will retry when online</strong></div>
+                <div class="btn-row"><button class="btn primary">Retry now</button><button class="btn ghost">Keep working offline</button></div>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="urgent">
+              <div class="stack">
+                <div class="eyebrow">Urgent help boundary</div>
+                <h1>Zeporah is not the right place for an emergency.</h1>
+                <div class="danger-card"><p>If someone is in immediate danger, in a medical emergency, or at risk of self-harm, contact emergency services or a crisis resource now.</p></div>
+                <div class="btn-row"><button class="btn primary">Call emergency services</button><button class="btn secondary">Open crisis options</button></div>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="test1">
+              <div class="stack">
+                <div class="eyebrow">Testing scenario 1</div>
+                <h1>Find the first thing to do.</h1>
+                <div class="soft-card"><p class="muted">Prompt: “You just entered this space after a difficult event. Show what you would do first, and say out loud what makes you choose that.”</p></div>
+                <div class="two-col"><div class="card"><div class="section-title">What to observe</div><ul><li>Do they identify the main action quickly?</li><li>Do they feel the dashboard is calm or too sparse?</li><li>Do they notice saved-for-later items?</li></ul></div><div class="card"><div class="section-title">Success signal</div><p class="muted">Participant understands the staged path without reading long explanation copy.</p></div></div>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="test2">
+              <div class="stack">
+                <div class="eyebrow">Testing scenario 2</div>
+                <h1>Invite help without oversharing.</h1>
+                <div class="soft-card"><p class="muted">Prompt: “You want practical help from Aunt Lisa, but you do not want her to see everything. Show how you would handle that.”</p></div>
+                <div class="two-col"><div class="card"><div class="section-title">What to observe</div><ul><li>Do they navigate to People naturally?</li><li>Do they understand role boundaries before sending?</li><li>Do they ask what private means?</li></ul></div><div class="card"><div class="section-title">Success signal</div><p class="muted">Participant trusts item-level access controls and can explain them back.</p></div></div>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="test3">
+              <div class="stack">
+                <div class="eyebrow">Testing scenario 3</div>
+                <h1>Ask for support with confidence.</h1>
+                <div class="soft-card"><p class="muted">Prompt: “You need support, but you want to know exactly what will be shared before asking for help. Show how you would check that.”</p></div>
+                <div class="two-col"><div class="card"><div class="section-title">What to observe</div><ul><li>Do they notice the review panel?</li><li>Do they expect hidden information to stay hidden?</li><li>Do they understand the request before sending?</li></ul></div><div class="card"><div class="section-title">Success signal</div><p class="muted">Participant verbalizes confidence in privacy boundaries before submitting.</p></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="frame view-tablet" id="frame-tablet">
+            <div class="window-top"><div class="logo"><div class="logo-mark" style="width:28px;height:28px"></div><span>Zeporah tablet concept</span></div><div>Adaptive layout</div></div>
+            <div class="tablet-app">
+              <div class="eyebrow">Tablet structure</div>
+              <h1>More overview, still emotionally gentle.</h1>
+              <div class="tablet-header-grid">
+                <div class="hero-card"><div class="section-title">Primary action</div><strong style="display:block;font-size:26px;font-family:var(--font-display);margin-bottom:6px">Tell the people who need to know.</strong><p class="muted">The primary path remains a dominant surface.</p></div>
+                <div class="priority-card"><div class="section-title">Trust context</div><p class="muted">Privacy defaults and sharing boundaries stay visible in adjacent context rather than moving to tiny controls.</p></div>
+              </div>
+              <div class="tablet-grid"><div class="card"><div class="section-title">Permissions preview</div><p class="muted">Helpers see approved tasks and shared updates only.</p></div><div class="card"><div class="section-title">Document preview</div><p class="muted">Private documents remain explicit and easy to scan.</p></div></div>
+              <div class="tablet-grid"><div class="soft-card"><div class="section-title">Deeper state example</div><p class="muted">Expired invites and denied requests become focused detail cards with recovery actions.</p></div><div class="soft-card"><div class="section-title">Testing fit</div><p class="muted">Tablet is useful for service environments, care settings, and guided support scenarios.</p></div></div>
+            </div>
+          </div>
+
+          <div class="frame view-mobile" id="frame-mobile">
+            <div class="window-top"><div class="logo"><div class="logo-mark" style="width:28px;height:28px"></div><span>Zeporah mobile concept</span></div><div>Adaptive layout</div></div>
+            <div class="mobile-flow">
+              <div class="eyebrow">Mobile focus</div>
+              <h1 style="font-size:40px;max-width:10ch">One step at a time still feels premium.</h1>
+              <div class="mobile-card">
+                <div class="section-title">What matters now</div>
+                <strong style="display:block;font-size:24px;font-family:var(--font-display);margin-bottom:8px">Tell the people who need to know.</strong>
+                <p class="muted">The mobile experience turns overview into progressive disclosure rather than cramming panels into one narrow screen.</p>
+              </div>
+              <div class="mobile-card"><div class="section-title">Privacy model</div><p class="muted">Sharing details move into focused review screens, so users never have to decode compressed permission UI.</p></div>
+              <div class="mobile-card"><div class="section-title">Edge state handling</div><p class="muted">Offline, expired, and denied states use the same calm visual language, so the experience stays coherent under stress.</p></div>
+              <div class="mobile-tabbar"><div class="active-tab">Home</div><div>People</div><div>Tasks</div><div>Support</div><div>Settings</div></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="panel right">
+      <div class="section-title">Design commentary</div>
+      <div id="commentary"></div>
+      <div class="section-title" style="margin-top:18px">Testing prompts</div>
+      <div id="prompts"></div>
+    </aside>
+  </div>
+
+  <script>
+    const commentary = {
+      dashboard: [
+        'The dashboard uses a strong editorial hero paired with restrained product surfaces so the experience feels supportive rather than clinical.',
+        'The right rail becomes a reassurance layer, not a dumping ground for extra information.',
+        'The system uses contrast in tone and spacing instead of bright colors to create hierarchy.'
+      ],
+      permissions: [
+        'This screen demonstrates the core trust promise: collaboration without default exposure.',
+        'Role definitions are short and plain-language, avoiding admin-panel complexity.',
+        'The visual treatment makes privacy feel like a product feature, not a hidden setting.'
+      ],
+      support: [
+        'The support request concept puts consent review adjacent to composition, reducing uncertainty before sending.',
+        'The design avoids red alert styling and instead uses calm clarity to preserve emotional steadiness.',
+        'This is a likely trust-critical flow for early testing.'
+      ],
+      documents: [
+        'Document management is softened through warm surfaces and bounded cards, reducing bureaucratic feel.',
+        'Item-level privacy is visually explicit on each row or card.',
+        'This area could later expand into OCR, checklist linking, and casework history.'
+      ],
+      denied: [
+        'The denied state avoids shame and keeps the user in control.',
+        'Recovery paths are visible but not pushy.',
+        'This tone matters because refusal can carry emotional weight in this category.'
+      ],
+      expired: [
+        'Async collaboration needs recovery states that feel routine, not broken.',
+        'The visual system keeps expired-link handling within the same calm brand language.',
+        'This supports real-world family coordination behavior.'
+      ],
+      resume: [
+        'Return onboarding should feel respectful of interruption.',
+        'The timeline presentation makes progress legible without looking like a business workflow engine.',
+        'This is important for first-week retention and setup completion.'
+      ],
+      offline: [
+        'Connectivity states start with reassurance before instruction.',
+        'The message hierarchy prioritizes data safety over technical diagnosis.',
+        'The visual language remains consistent, which reduces panic.'
+      ],
+      urgent: [
+        'The urgent state is intentionally firmer than the rest of the product.',
+        'It creates a clear boundary around what the product is not for.',
+        'This is important for ethical and operational scope control.'
+      ],
+      test1: [
+        'This scenario measures whether the product hierarchy reduces overwhelm on first entry.',
+        'It is useful for validating tone and prioritization at the same time.',
+        'A strong result means users move confidently without extra explanation.'
+      ],
+      test2: [
+        'This scenario measures whether the collaboration model feels safe and understandable.',
+        'It should reveal whether permission language is clear enough.',
+        'It is particularly valuable for caregiver and family-helper research.'
+      ],
+      test3: [
+        'This scenario measures whether users trust the support request review pattern.',
+        'It helps validate how much privacy explanation needs to be inline versus implicit.',
+        'This is one of the most trust-sensitive flows in the concept.'
+      ]
+    };
+
+    const prompts = {
+      dashboard: ['Ask: “What kind of product do you think this is?”', 'Ask: “What do you think you should do first?”'],
+      permissions: ['Ask: “Who do you think can see what?”', 'Ask: “Where do you look to confirm privacy boundaries?”'],
+      support: ['Ask: “What will be shared if you send this?”', 'Ask: “What still feels uncertain?”'],
+      documents: ['Ask: “How do you know this is private?”', 'Ask: “How would you share one item but not the rest?”'],
+      denied: ['Ask: “What just happened?”', 'Ask: “Does this feel final or flexible?”'],
+      expired: ['Ask: “What would you do next?”', 'Ask: “Do you think permissions changed?”'],
+      resume: ['Ask: “Do you understand where you are resuming?”', 'Ask: “Would you continue or restart?”'],
+      offline: ['Ask: “Do you trust that your work is safe?”', 'Ask: “What do you think happens next?”'],
+      urgent: ['Ask: “What is the product telling you to do?”', 'Ask: “Does this boundary feel clear enough?”'],
+      test1: ['Moderator: remain silent after initial prompt.', 'Watch whether the participant reaches the hero action naturally.'],
+      test2: ['Moderator: ask for a verbal explanation of who gets access.', 'Watch for hesitation around the invite step.'],
+      test3: ['Moderator: ask them to describe what crosses the privacy boundary.', 'Watch whether the review panel answers their concerns.']
+    };
+
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const screens = document.querySelectorAll('.screen');
+    const commentaryEl = document.getElementById('commentary');
+    const promptsEl = document.getElementById('prompts');
+    const deviceTabs = document.querySelectorAll('.device-tab');
+    const shell = document.querySelector('.prototype-shell');
+    const gotoButtons = document.querySelectorAll('[data-goto]');
+
+    function renderSide(screen) {
+      commentaryEl.innerHTML = (commentary[screen] || []).map(text => `<div class="crit-card"><p class="muted">${text}</p></div>`).join('');
+      promptsEl.innerHTML = (prompts[screen] || []).map(text => `<div class="prompt-card"><p class="muted">${text}</p></div>`).join('');
+    }
+
+    function activateScreen(screenName) {
+      screens.forEach(screen => screen.classList.toggle('active-screen', screen.dataset.screen === screenName));
+      navButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.screen === screenName));
+      renderSide(screenName);
+    }
+
+    navButtons.forEach(btn => btn.addEventListener('click', () => activateScreen(btn.dataset.screen)));
+    gotoButtons.forEach(btn => btn.addEventListener('click', () => activateScreen(btn.dataset.goto)));
+    deviceTabs.forEach(tab => tab.addEventListener('click', () => {
+      deviceTabs.forEach(t => t.classList.toggle('active', t === tab));
+      shell.classList.remove('desktop', 'tablet', 'mobile');
+      shell.classList.add(tab.dataset.device);
+    }));
+
+    activateScreen('dashboard');
+  </script>
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zeporah Low-Fi Expanded Prototype</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --surface: #fffdf9;
+      --surface-2: #ece7de;
+      --surface-3: #f8f4ee;
+      --line: #b7afa3;
+      --text: #201c17;
+      --muted: #6f685f;
+      --ink: #111111;
+      --radius: 16px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --shadow: 0 10px 28px rgba(0,0,0,.07);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr 340px;
+      min-height: 100vh;
+    }
+    .panel {
+      background: var(--surface-2);
+      padding: var(--space-5);
+      border-right: 2px solid var(--line);
+      overflow: auto;
+    }
+    .panel.right {
+      border-right: none;
+      border-left: 2px solid var(--line);
+    }
+    .canvas {
+      padding: var(--space-6);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .phone {
+      width: 390px;
+      min-height: 844px;
+      background: var(--surface);
+      border: 2px solid var(--ink);
+      border-radius: 34px;
+      box-shadow: var(--shadow);
+      padding: var(--space-4);
+      position: relative;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-5);
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    h1 {
+      margin: 0 0 var(--space-4);
+      font-size: 28px;
+      line-height: 1.1;
+    }
+    h2 {
+      margin: 0 0 var(--space-3);
+      font-size: 18px;
+    }
+    p { margin: 0 0 var(--space-4); font-size: 15px; }
+    .tiny { font-size: 12px; color: var(--muted); }
+    .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: var(--surface-2);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: var(--space-3);
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .stack > * + * { margin-top: var(--space-4); }
+    .card {
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: var(--space-4);
+    }
+    .soft-card {
+      border: 2px dashed var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-3);
+      padding: var(--space-4);
+    }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .triple { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .field { display: grid; gap: 8px; }
+    .field label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--muted);
+    }
+    .input, .select, .textarea {
+      min-height: 48px;
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fff;
+      font-size: 15px;
+    }
+    .textarea { min-height: 110px; }
+    .option {
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .priority-card {
+      border: 2px solid var(--ink);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .btns, .nav, .checks { display: grid; gap: 10px; }
+    button {
+      width: 100%;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: #fff;
+      padding: 14px 16px;
+      font-size: 15px;
+      text-align: left;
+      cursor: pointer;
+    }
+    button.primary { background: var(--surface-2); }
+    button.ghost { border-style: dashed; background: transparent; }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin-bottom: 8px; }
+    .chip-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip {
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      background: #fff;
+    }
+    .panel h3 {
+      margin-top: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .nav button.active-nav { background: #e6dfd3; }
+    .note {
+      border: 2px dashed var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.55);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .footer-nav {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      border: 2px solid var(--ink);
+      border-radius: 18px;
+      background: #fff;
+      padding: 8px;
+      font-size: 11px;
+      text-align: center;
+    }
+    .footer-nav div {
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      padding: 8px 4px;
+    }
+    @media (max-width: 1150px) {
+      .layout { grid-template-columns: 1fr; }
+      .panel, .panel.right { border: none; border-bottom: 2px solid var(--line); }
+      .canvas { padding: var(--space-4); }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="panel">
+      <h3>Prototype screens</h3>
+      <div class="nav">
+        <button class="active-nav" data-target="welcome">LF-01 Welcome</button>
+        <button data-target="privacy">LF-04 Privacy overview</button>
+        <button data-target="language">LF-05 Language & accessibility</button>
+        <button data-target="create">LF-06 Create account</button>
+        <button data-target="verify">LF-07 Verification code</button>
+        <button data-target="boundaries">LF-08 What Zeporah can/can’t do</button>
+        <button data-target="role">LF-10 Choose role</button>
+        <button data-target="setup">LF-11 Minimal setup</button>
+        <button data-target="needs">LF-12 What feels helpful</button>
+        <button data-target="workspace">LF-13 Name workspace</button>
+        <button data-target="privacybase">LF-14 Privacy baseline</button>
+        <button data-target="review">LF-20 Setup review</button>
+        <button data-target="home">LF-21 Home / recent loss</button>
+        <button data-target="carddetail">LF-24 First things first</button>
+        <button data-target="task">LF-33 Task detail</button>
+        <button data-target="pause">LF-47 Compassionate pause</button>
+        <button data-target="support">LF-51 Support options</button>
+        <button data-target="request">LF-53 Request a connection</button>
+        <button data-target="share">LF-54 Share preview</button>
+        <button data-target="sent">LF-55 Request sent</button>
+        <button data-target="status">LF-56 Request status</button>
+      </div>
+    </aside>
+
+    <main class="canvas">
+      <div class="phone">
+        <div class="topbar"><div>Zeporah</div><div>Expanded low-fi prototype</div></div>
+
+        <section id="welcome" class="screen active stack">
+          <div class="tag">LF-01</div>
+          <h1>A private place to organize what comes next.</h1>
+          <p>Zeporah helps families keep track of tasks, information, and support after a loss or during serious family responsibilities.</p>
+          <div class="soft-card"><ul><li>Know what matters now.</li><li>Share only what you choose.</li><li>Come back whenever you are ready.</li></ul></div>
+          <div class="card"><strong>Private by default.</strong><p class="tiny">No organization, sponsor, or partner can see your family space unless you choose to send something.</p></div>
+          <div class="btns">
+            <button class="primary next" data-next="privacy">Create a private family space</button>
+            <button class="next" data-next="privacy">Learn how privacy works</button>
+            <button>I already have an account</button>
+          </div>
+        </section>
+
+        <section id="privacy" class="screen stack">
+          <div class="tag">LF-04</div>
+          <h1>Your family space is private by default.</h1>
+          <p>Tasks, notes, contacts, and documents stay inside the family space unless you intentionally share something.</p>
+          <div class="two-col">
+            <div class="card"><strong>You</strong><p class="tiny">Control access and sharing.</p></div>
+            <div class="card"><strong>People you invite</strong><p class="tiny">See only what you choose.</p></div>
+          </div>
+          <div class="card"><strong>Support recipients</strong><p class="tiny">Nothing is sent automatically. Requests are reviewed before sending.</p></div>
+          <div class="btns">
+            <button class="primary next" data-next="language">Continue</button>
+            <button>Read full privacy summary</button>
+          </div>
+        </section>
+
+        <section id="language" class="screen stack">
+          <div class="tag">LF-05</div>
+          <h1>Set this up in the way that feels easiest.</h1>
+          <div class="field"><label>Preferred language</label><div class="select">English</div></div>
+          <div class="field"><label>Text size</label><div class="select">Larger text</div></div>
+          <div class="field"><label>Explanation style</label><div class="select">Simpler explanations</div></div>
+          <div class="field"><label>Reminder style</label><div class="select">Fewer reminders</div></div>
+          <p class="tiny">These settings only affect your experience.</p>
+          <div class="btns"><button class="primary next" data-next="create">Save and continue</button><button class="next" data-next="create">Skip for now</button></div>
+        </section>
+
+        <section id="create" class="screen stack">
+          <div class="tag">LF-06</div>
+          <h1>Secure your private space.</h1>
+          <p>Use an email or phone number so you can return later and control access to the family space.</p>
+          <div class="chip-row"><div class="chip">Use email</div><div class="chip">Use mobile number</div></div>
+          <div class="field"><label>Email</label><div class="input">name@example.com</div></div>
+          <p class="tiny">We will send a code to confirm it is you.</p>
+          <div class="btns"><button class="primary next" data-next="verify">Continue</button><button>I already have an account</button></div>
+        </section>
+
+        <section id="verify" class="screen stack">
+          <div class="tag">LF-07</div>
+          <h1>Enter your code.</h1>
+          <p>We sent a code to n•••@example.com.</p>
+          <div class="two-col"><div class="input">1 2 3</div><div class="input">4 5 6</div></div>
+          <div class="btns"><button class="primary next" data-next="boundaries">Verify</button><button>Resend code</button><button>Use a different email or number</button></div>
+          <p class="tiny">The message does not include private family details.</p>
+        </section>
+
+        <section id="boundaries" class="screen stack">
+          <div class="tag">LF-08</div>
+          <h1>What Zeporah can and cannot do.</h1>
+          <div class="two-col">
+            <div class="card"><strong>Can do</strong><ul class="tiny"><li>Organize tasks.</li><li>Save important information.</li><li>Help coordinate trusted people.</li><li>Show support options.</li></ul></div>
+            <div class="card"><strong>Cannot do</strong><ul class="tiny"><li>Replace emergency help.</li><li>Give legal, tax, or medical advice.</li><li>Share anything without your approval.</li></ul></div>
+          </div>
+          <div class="btns"><button class="primary next" data-next="role">I understand, continue</button></div>
+        </section>
+
+        <section id="role" class="screen stack">
+          <div class="tag">LF-10</div>
+          <h1>Choose the role that fits what you are doing.</h1>
+          <div class="option"><strong>Coordinator</strong><p class="tiny">Manages the family space and controls sharing.</p></div>
+          <div class="option"><strong>Co-Coordinator</strong><p class="tiny">Helps manage tasks and shared items.</p></div>
+          <div class="option"><strong>Helper</strong><p class="tiny">Handles selected work only.</p></div>
+          <div class="option"><strong>Viewer</strong><p class="tiny">Sees selected updates only.</p></div>
+          <div class="btns"><button class="primary next" data-next="setup">Continue as Coordinator</button><button>I’m not sure yet</button></div>
+          <p class="tiny">This helps set access. It does not decide legal authority.</p>
+        </section>
+
+        <section id="setup" class="screen stack">
+          <div class="tag">LF-11</div>
+          <h1>Start with only what matters right now.</h1>
+          <div class="field"><label>Loved one’s first name or nickname</label><div class="input">Mom</div></div>
+          <div class="field"><label>Which best fits right now?</label><div class="select">Recent loss</div></div>
+          <div class="field"><label>Relationship to you</label><div class="select">Parent</div></div>
+          <div class="field"><label>Location</label><div class="input">Georgia ZIP placeholder</div></div>
+          <p class="tiny">We use location only to make recommendations more relevant if you want that later.</p>
+          <div class="btns"><button class="primary next" data-next="needs">Continue</button><button>Skip optional questions</button></div>
+        </section>
+
+        <section id="needs" class="screen stack">
+          <div class="tag">LF-12</div>
+          <h1>What would feel most helpful right now?</h1>
+          <div class="option"><strong>Knowing what to do first</strong></div>
+          <div class="option"><strong>Keeping information in one place</strong></div>
+          <div class="option"><strong>Finding support or someone to talk to</strong></div>
+          <div class="option"><strong>I’m not sure</strong></div>
+          <div class="btns"><button class="primary next" data-next="workspace">Continue</button><button>Skip for now</button></div>
+        </section>
+
+        <section id="workspace" class="screen stack">
+          <div class="tag">LF-13</div>
+          <h1>Name your family space.</h1>
+          <div class="field"><label>Workspace name</label><div class="input">Mom’s next steps</div></div>
+          <p class="tiny">If you share a device, you may want to choose something simple.</p>
+          <div class="btns"><button class="primary next" data-next="privacybase">Continue</button></div>
+        </section>
+
+        <section id="privacybase" class="screen stack">
+          <div class="tag">LF-14</div>
+          <h1>Start with private defaults.</h1>
+          <div class="soft-card"><ul><li>New tasks visible only to you until shared.</li><li>Notes private by default.</li><li>Contacts private by default.</li><li>Documents private by default.</li><li>Support requests reviewed before sending.</li></ul></div>
+          <div class="btns"><button class="primary next" data-next="review">Keep these private defaults</button><button>Review and customize</button></div>
+        </section>
+
+        <section id="review" class="screen stack">
+          <div class="tag">LF-20</div>
+          <h1>You have enough to begin.</h1>
+          <div class="card"><strong>Your role</strong><p class="tiny">Coordinator</p></div>
+          <div class="card"><strong>Current stage</strong><p class="tiny">Recent loss</p></div>
+          <div class="card"><strong>Privacy defaults</strong><p class="tiny">Private by default</p></div>
+          <p>You do not need to finish everything today. Zeporah will help you start with one next step.</p>
+          <div class="btns"><button class="primary next" data-next="home">Go to my next step</button><button>Save and leave</button></div>
+        </section>
+
+        <section id="home" class="screen stack">
+          <div class="tag">LF-21</div>
+          <h1>You do not need to do everything today.</h1>
+          <p>Start with a few things that matter now. Other tasks can wait.</p>
+          <div class="priority-card next" data-next="carddetail"><div class="tiny">What matters now</div><strong>Tell the people who need to know</strong><p class="tiny">Start with one update or one call.</p></div>
+          <div class="priority-card"><strong>Save important contacts</strong><p class="tiny">Keep phone numbers and names in one place.</p></div>
+          <div class="priority-card"><strong>Keep documents in one place</strong><p class="tiny">Add forms, records, and important files later.</p></div>
+          <div class="soft-card"><strong>Later</strong><p class="tiny">Estate-heavy or account-heavy items can wait until you are ready.</p></div>
+          <div class="footer-nav"><div>Home</div><div>People</div><div>Tasks</div><div>Support</div><div>Settings</div></div>
+        </section>
+
+        <section id="carddetail" class="screen stack">
+          <div class="tag">LF-24</div>
+          <h1>Tell the people who need to know</h1>
+          <div class="card"><strong>Why this matters</strong><p class="tiny">A simple first message or call can reduce confusion and help others support you.</p></div>
+          <div class="card"><strong>What you can do now</strong><ul class="tiny"><li>Write one sentence.</li><li>Choose one person to contact first.</li><li>Save a draft without sending.</li></ul></div>
+          <div class="soft-card"><strong>What can wait</strong><p class="tiny">You do not need to notify everyone at once.</p></div>
+          <div class="btns"><button class="primary next" data-next="task">Start this step</button><button class="next" data-next="pause">Show me a smaller step</button></div>
+        </section>
+
+        <section id="task" class="screen stack">
+          <div class="tag">LF-33</div>
+          <h1>Tell the people who need to know</h1>
+          <div class="chip-row"><div class="chip">Visible to: Only me</div><div class="chip">Due: This week</div></div>
+          <div class="card"><strong>Why this task exists</strong><p class="tiny">This helps you make sure key people hear from you in a way that feels manageable.</p></div>
+          <div class="field"><label>Draft message</label><div class="textarea">I wanted to let you know that Mom passed away. I am taking things one step at a time and will share more when I can.</div></div>
+          <div class="btns"><button>Mark complete</button><button>Ask someone to help</button><button class="primary next" data-next="pause">I need help with this</button><button>Save and come back later</button></div>
+          <p class="tiny">Related notes and documents remain private unless you share them separately.</p>
+        </section>
+
+        <section id="pause" class="screen stack">
+          <div class="tag">LF-47</div>
+          <h1>You can pause here.</h1>
+          <p>This is a lot to carry. Your progress is saved. Choose what feels most possible next.</p>
+          <div class="btns"><button>Show me one smaller step</button><button>Ask someone I trust to help</button><button class="primary next" data-next="support">See support options</button><button>Save and come back later</button><button>Hide this for now</button><button>I need urgent help</button></div>
+          <div class="soft-card"><p class="tiny">No one is contacted from this screen. Your work is already saved.</p></div>
+        </section>
+
+        <section id="support" class="screen stack">
+          <div class="tag">LF-51</div>
+          <h1>Support that may help right now.</h1>
+          <p>Based on what you selected, here are a few options. You can save them, contact them yourself, or ask Zeporah to request a connection.</p>
+          <div class="card"><strong>Bereavement support</strong><p class="tiny">What it can help with: grief conversation and emotional support.</p><p class="tiny">Why am I seeing this? You selected support and recent loss.</p><div class="btns"><button class="primary next" data-next="request">Request connection</button><button>Contact independently</button></div></div>
+          <div class="card"><strong>Practical caregiver support</strong><p class="tiny">What it can help with: next steps and practical responsibilities.</p></div>
+        </section>
+
+        <section id="request" class="screen stack">
+          <div class="tag">LF-53</div>
+          <h1>Request a connection.</h1>
+          <div class="field"><label>Request type</label><div class="select">Bereavement support</div></div>
+          <div class="field"><label>Preferred contact method</label><div class="select">Phone</div></div>
+          <div class="field"><label>Preferred contact time</label><div class="select">Afternoon</div></div>
+          <div class="field"><label>Optional message</label><div class="textarea">I would appreciate a call when someone is available. I am having a hard time knowing what to do next.</div></div>
+          <div class="btns"><button class="primary next" data-next="share">Review what will be shared</button><button>Save draft</button></div>
+        </section>
+
+        <section id="share" class="screen stack">
+          <div class="tag">LF-54</div>
+          <h1>Review this request before sending.</h1>
+          <div class="card"><strong>Recipient</strong><p class="tiny">Organization-approved bereavement support</p></div>
+          <div class="two-col">
+            <div class="card"><strong>Will be shared</strong><ul class="tiny"><li>Your name</li><li>Preferred contact method</li><li>Preferred contact time</li><li>Optional short message</li></ul></div>
+            <div class="card"><strong>Will not be shared</strong><ul class="tiny"><li>Private notes</li><li>Documents</li><li>Task details</li><li>Family messages</li></ul></div>
+          </div>
+          <div class="btns"><button class="primary next" data-next="sent">Send my request</button><button class="next" data-next="request">Edit request</button></div>
+        </section>
+
+        <section id="sent" class="screen stack">
+          <div class="tag">LF-55</div>
+          <h1>Your request was sent.</h1>
+          <div class="card"><strong>Recipient</strong><p class="tiny">Organization-approved bereavement support</p></div>
+          <div class="card"><strong>Request category</strong><p class="tiny">Bereavement support</p></div>
+          <p>If status updates are available, you will see them here.</p>
+          <div class="btns"><button class="primary next" data-next="status">View request status</button><button class="next" data-next="task">Return to my task</button></div>
+        </section>
+
+        <section id="status" class="screen stack">
+          <div class="tag">LF-56</div>
+          <h1>Your support request.</h1>
+          <div class="card"><strong>Status</strong><p class="tiny">Received</p></div>
+          <div class="card"><strong>Next</strong><p class="tiny">A team member has been notified.</p></div>
+          <div class="btns"><button>Review what I shared</button><button>Update contact preference</button><button class="primary next" data-next="task">Return to my task</button><button class="next" data-next="support">See other support options</button></div>
+          <p class="tiny">Internal staff notes are not shown here.</p>
+        </section>
+      </div>
+    </main>
+
+    <aside class="panel right">
+      <h3>Screen notes</h3>
+      <div id="notes"></div>
+    </aside>
+  </div>
+
+  <script>
+    const meta = {
+      welcome: ['Establish trust and core value.', 'Primary action: create a private family space.', 'Next: privacy overview.'],
+      privacy: ['Explain the trust model quickly.', 'Primary action: continue.', 'Next: language and accessibility.'],
+      language: ['Let the user simplify the experience early.', 'Primary action: save and continue.', 'Next: create account.'],
+      create: ['Secure access to the family space.', 'Primary action: continue with email or phone.', 'Next: verification code.'],
+      verify: ['Confirm user identity with minimal friction.', 'Primary action: verify.', 'Next: capability boundaries.'],
+      boundaries: ['Set clear limits before support is introduced.', 'Primary action: continue.', 'Next: choose role.'],
+      role: ['Set collaboration role and permissions baseline.', 'Primary action: continue as Coordinator.', 'Next: minimal setup.'],
+      setup: ['Capture only enough context to build the first dashboard.', 'Primary action: continue.', 'Next: what feels helpful.'],
+      needs: ['Identify immediate priorities without forcing a detailed intake.', 'Primary action: continue.', 'Next: workspace naming.'],
+      workspace: ['Create a recognizable workspace label.', 'Primary action: continue.', 'Next: privacy baseline.'],
+      privacybase: ['Establish private-by-default settings.', 'Primary action: keep private defaults.', 'Next: setup review.'],
+      review: ['End onboarding with reassurance, not celebration.', 'Primary action: go to next step.', 'Next: recent-loss home.'],
+      home: ['Reduce overwhelm to a few guided priorities.', 'Primary action: open top priority card.', 'Next: first-things-first detail.'],
+      carddetail: ['Explain why a task matters and make it smaller.', 'Primary action: start this step.', 'Next: task detail.'],
+      task: ['Allow action, delegation, or support from one screen.', 'Primary action: choose the next best action.', 'Next: compassionate pause.'],
+      pause: ['Create a humane interruption point.', 'Primary action: choose one practical path.', 'Next: support options or alternate branches.'],
+      support: ['Offer a small, transparent set of support choices.', 'Primary action: request connection.', 'Next: request a connection form.'],
+      request: ['Collect only the information needed for a support request.', 'Primary action: review what will be shared.', 'Next: share preview.'],
+      share: ['Make consent explicit before sending.', 'Primary action: send request.', 'Next: request sent.'],
+      sent: ['Confirm request transmission without overpromising.', 'Primary action: view status.', 'Next: request status or return to task.'],
+      status: ['Show limited operational follow-up.', 'Primary action: return to my task.', 'Next: task detail or support options.']
+    };
+
+    const screens = document.querySelectorAll('.screen');
+    const navButtons = document.querySelectorAll('.nav button');
+    const nextButtons = document.querySelectorAll('.next');
+    const notes = document.getElementById('notes');
+
+    function renderNotes(id) {
+      notes.innerHTML = meta[id].map(item => `<div class="note"><p class="tiny">${item}</p></div>`).join('');
+    }
+
+    function showScreen(id) {
+      screens.forEach(s => s.classList.toggle('active', s.id === id));
+      navButtons.forEach(b => b.classList.toggle('active-nav', b.dataset.target === id));
+      renderNotes(id);
+    }
+
+    navButtons.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.target)));
+    nextButtons.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.next)));
+    renderNotes('welcome');
+  </script>
+</body>
+</html>

@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zeporah Deeper MVP Flows</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --surface: #fffdfa;
+      --surface-2: #f8f4ed;
+      --surface-3: #efe7db;
+      --surface-4: #e6ddcf;
+      --ink: #241e19;
+      --muted: #6d645b;
+      --faint: #9a9086;
+      --primary: #285d59;
+      --primary-2: #357570;
+      --primary-soft: #d8ebe6;
+      --primary-soft-2: #edf6f2;
+      --accent: #9b6b47;
+      --accent-soft: #f2e2d5;
+      --warning-soft: #f4e6d8;
+      --success-soft: #e2eadf;
+      --danger-soft: #f1dfe4;
+      --line: rgba(48,37,26,.11);
+      --line-strong: rgba(48,37,26,.18);
+      --shadow-sm: 0 10px 24px rgba(33,25,21,.06);
+      --shadow-md: 0 28px 58px rgba(33,25,21,.09);
+      --shadow-lg: 0 42px 84px rgba(33,25,21,.12);
+      --radius-sm: 14px;
+      --radius-md: 22px;
+      --radius-lg: 30px;
+      --radius-xl: 38px;
+      --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+      --text-xs: 12px; --text-sm: 14px; --text-base: 16px; --text-lg: 20px; --text-xl: 30px; --text-2xl: 42px; --text-3xl: 56px;
+      --font-body: 'Inter', Arial, sans-serif;
+      --font-display: 'Fraunces', Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-body);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(216,235,230,.72), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(242,226,213,.58), transparent 28%),
+        linear-gradient(180deg, #faf7f2 0%, #f1ece5 100%);
+    }
+    .shell { min-height: 100vh; display: grid; grid-template-columns: 310px 1fr 330px; }
+    .left, .right {
+      background: rgba(255,253,250,.74);
+      backdrop-filter: blur(18px);
+      padding: 24px;
+      overflow: auto;
+    }
+    .left { border-right: 1px solid var(--line); }
+    .right { border-left: 1px solid var(--line); }
+    .center { display: flex; justify-content: center; align-items: flex-start; padding: 28px; }
+    .workspace { width: min(1460px, 100%); display: grid; grid-template-columns: 330px minmax(0,1fr); gap: 24px; }
+    .summary, .frame, .side-card {
+      background: rgba(255,253,250,.86);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-md);
+    }
+    .summary {
+      border-radius: 32px;
+      padding: 24px;
+      position: sticky;
+      top: 28px;
+      align-self: start;
+    }
+    .frame {
+      border-radius: 36px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .mark {
+      width: 38px; height: 38px; border-radius: 14px; background: linear-gradient(180deg, var(--primary-soft) 0%, #c9ddd8 100%);
+      border: 1px solid rgba(40,93,89,.15); position: relative; box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+    }
+    .mark::before, .mark::after { content:""; position:absolute; border:1.5px solid var(--primary); border-radius:11px; }
+    .mark::before { inset:8px; }
+    .mark::after { inset:13px; border-radius:7px; }
+    .eyebrow {
+      display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; background:var(--primary-soft-2);
+      color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px;
+    }
+    .eyebrow::before { content:""; width:8px; height:8px; border-radius:999px; background:var(--primary); }
+    .section-label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
+    h1, h2, h3, h4 { margin: 0; }
+    h1 { font-family: var(--font-display); font-size: var(--text-2xl); line-height: 1.04; letter-spacing: -.03em; margin-bottom: 12px; }
+    .hero-title { font-size: var(--text-3xl); max-width: 10.5ch; }
+    p { margin: 0; }
+    .muted { color: var(--muted); }
+    .faint { color: var(--faint); }
+    .stack > * + * { margin-top: 14px; }
+    .chip-row, .device-tabs { display:flex; gap:8px; flex-wrap:wrap; }
+    .chip {
+      display:inline-flex; align-items:center; gap:8px; padding:9px 12px; border-radius:999px; background:#fff;
+      border:1px solid var(--line); color:var(--muted); font-size:12px;
+    }
+    .btn, .nav-btn, .device-tab {
+      appearance:none; border:1px solid var(--line-strong); background:#fff; color:var(--ink); border-radius:16px;
+      padding:13px 15px; font-size:14px; cursor:pointer; text-align:left;
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .btn:hover, .nav-btn:hover, .device-tab:hover { transform:translateY(-1px); box-shadow:var(--shadow-sm); }
+    .btn.primary { background:linear-gradient(180deg, var(--primary-2) 0%, var(--primary) 100%); color:#f7f5f0; border-color:rgba(40,93,89,.34); }
+    .btn.secondary { background: var(--surface-2); }
+    .btn.ghost { background: transparent; border-style: dashed; }
+    .nav-title { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin:20px 0 10px; }
+    .nav-list { display:grid; gap:10px; }
+    .nav-btn.active, .device-tab.active { background: var(--primary-soft); border-color: rgba(40,93,89,.22); }
+    .window-top {
+      display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:18px;
+    }
+    .desktop { min-height: 960px; }
+    .tablet, .mobile { display:none; }
+    .screen-layer.tablet .desktop, .screen-layer.mobile .desktop { display:none; }
+    .screen-layer.tablet .tablet { display:block; min-height:920px; }
+    .screen-layer.mobile .mobile { display:block; min-height:920px; width:430px; margin:0 auto; }
+    .screen-layer.desktop .desktop { display:block; }
+    .desktop-app { display:grid; grid-template-columns:250px minmax(0,1fr) 330px; gap:18px; min-height:860px; }
+    .rail, .main, .side { background:linear-gradient(180deg, rgba(255,255,255,.97) 0%, rgba(249,245,239,.95) 100%); border:1px solid var(--line); border-radius:28px; padding:18px; }
+    .rail-item { padding:13px 14px; border-radius:16px; color:var(--muted); border:1px solid transparent; margin-bottom:8px; display:flex; justify-content:space-between; }
+    .rail-item.active { background:var(--surface-2); color:var(--ink); border-color:var(--line); }
+    .hero-card, .card, .soft-card, .priority-card, .callout, .success-card, .danger-card, .timeline-card {
+      border-radius:24px; padding:18px; border:1px solid var(--line);
+    }
+    .hero-card { background:linear-gradient(180deg, #fffdfa 0%, #f5eee4 100%); box-shadow:var(--shadow-md); padding:28px; }
+    .card { background:#fff; box-shadow:var(--shadow-sm); }
+    .soft-card { background:var(--surface-2); border-color:rgba(48,37,26,.06); }
+    .priority-card { background:linear-gradient(180deg, var(--primary-soft-2) 0%, #e5efec 100%); border-color:rgba(40,93,89,.12); }
+    .callout { background:var(--warning-soft); border-color:rgba(155,107,71,.18); }
+    .success-card { background:var(--success-soft); border-color:rgba(81,120,77,.14); }
+    .danger-card { background:var(--danger-soft); border-color:rgba(145,81,90,.18); }
+    .status-row {
+      display:flex; justify-content:space-between; align-items:center; gap:12px; background:rgba(255,255,255,.86);
+      border:1px solid var(--line); border-radius:18px; padding:14px 16px;
+    }
+    .kpi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px; }
+    .kpi { background:var(--surface-2); border:1px solid rgba(48,37,26,.06); border-radius:20px; padding:16px; }
+    .content-grid, .two-col, .three-col { display:grid; gap:12px; }
+    .content-grid { grid-template-columns:1.15fr 1fr; margin-top:14px; }
+    .two-col { grid-template-columns:1fr 1fr; }
+    .three-col { grid-template-columns:repeat(3,1fr); }
+    .field { display:grid; gap:8px; }
+    .field label { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .input, .textarea, .select { min-height:52px; border-radius:16px; padding:14px 16px; background:#fff; border:1px solid var(--line-strong); }
+    .textarea { min-height:120px; }
+    .timeline { display:grid; gap:12px; }
+    .timeline-item { display:grid; grid-template-columns:20px 1fr; gap:12px; }
+    .timeline-dot { width:12px; height:12px; border-radius:999px; background:var(--primary); margin-top:6px; box-shadow:0 0 0 4px rgba(216,235,230,.75); }
+    .timeline-item.pending .timeline-dot { background:#ccb9a5; box-shadow:0 0 0 4px rgba(241,225,212,.8); }
+    .choice-grid { display:grid; gap:12px; }
+    .choice { background:#fff; border:1px solid var(--line); border-radius:20px; padding:16px; cursor:pointer; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+    .choice:hover { transform:translateY(-2px); box-shadow:var(--shadow-sm); border-color:var(--line-strong); }
+    .choice strong { display:block; margin-bottom:6px; }
+    .activity { display:grid; gap:10px; }
+    .activity-item { background:#fff; border:1px solid var(--line); border-radius:18px; padding:14px; }
+    .overlay {
+      position:absolute; inset:0; background:rgba(247,243,238,.76); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; padding:24px;
+    }
+    .overlay.active { display:flex; }
+    .modal {
+      width:min(700px,100%); background:linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(249,244,236,.96) 100%);
+      border:1px solid var(--line); border-radius:28px; box-shadow:var(--shadow-lg); padding:24px; transform:translateY(8px) scale(.985); opacity:.6; transition:transform .28s ease, opacity .28s ease;
+    }
+    .overlay.active .modal { transform:translateY(0) scale(1); opacity:1; }
+    .screen { display:none; opacity:0; transform:translateY(10px); transition:opacity .22s ease, transform .22s ease; }
+    .screen.active { display:block; opacity:1; transform:translateY(0); }
+    .task-list { display:grid; gap:10px; }
+    .task-row { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; background:#fff; border:1px solid var(--line); border-radius:18px; padding:14px; }
+    .badge { display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; background:var(--surface-3); color:var(--muted); font-size:12px; }
+    .tabbar {
+      position:sticky; bottom:0; display:grid; grid-template-columns:repeat(5,1fr); gap:8px; background:rgba(255,253,250,.96);
+      border:1px solid var(--line); border-radius:22px; padding:8px; backdrop-filter:blur(10px);
+    }
+    .tabbar div { text-align:center; padding:11px 4px; border-radius:16px; font-size:11px; color:var(--muted); }
+    .tabbar .active-tab { background:var(--primary-soft-2); color:var(--ink); font-weight:600; }
+    .tablet-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .tablet-hero { display:grid; grid-template-columns:1.15fr .85fr; gap:14px; }
+    .mobile-stack { display:grid; gap:14px; }
+    .mobile-card { background:rgba(255,255,255,.96); border:1px solid var(--line); border-radius:24px; padding:18px; box-shadow:var(--shadow-sm); }
+    .right h3, .left h3 { margin:0 0 10px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+    .side-card { border-radius:22px; padding:18px; margin-bottom:14px; }
+    ul { margin:0; padding-left:18px; }
+    li { margin-bottom:8px; }
+    @media (max-width:1280px) {
+      .shell { grid-template-columns:1fr; }
+      .left, .right { border:none; border-bottom:1px solid var(--line); }
+      .workspace { grid-template-columns:1fr; }
+      .summary { position:relative; top:auto; }
+      .center { padding:20px; }
+    }
+    @media (max-width:900px) {
+      .desktop, .tablet { display:none !important; }
+      .screen-layer.mobile .mobile, .screen-layer.desktop .mobile, .screen-layer.tablet .mobile { display:block; width:min(430px,100%); }
+      .workspace { width:100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="left">
+      <div class="brand">
+        <div class="mark"></div>
+        <div>
+          <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Zeporah</div>
+          <div style="font-family:var(--font-display);font-size:22px">Deeper MVP flows</div>
+        </div>
+      </div>
+      <div class="eyebrow">Expanded product narrative</div>
+      <p class="muted" style="margin-bottom:18px">This pass deepens the MVP by connecting the main journeys to reminders, history, task management, helper collaboration, and settings.</p>
+      <div class="device-tabs" style="margin-bottom:18px">
+        <button class="device-tab active" data-device="desktop">Desktop</button>
+        <button class="device-tab" data-device="tablet">Tablet</button>
+        <button class="device-tab" data-device="mobile">Mobile</button>
+      </div>
+      <div class="nav-title">Core journeys</div>
+      <div class="nav-list">
+        <button class="nav-btn active" data-screen="dashboard">Dashboard</button>
+        <button class="nav-btn" data-screen="tasks">Tasks and progress</button>
+        <button class="nav-btn" data-screen="task-detail">Task detail</button>
+        <button class="nav-btn" data-screen="reminders">Reminder setup</button>
+        <button class="nav-btn" data-screen="history">History and completed steps</button>
+      </div>
+      <div class="nav-title">Collaboration</div>
+      <div class="nav-list">
+        <button class="nav-btn" data-screen="people">People and helper access</button>
+        <button class="nav-btn" data-screen="helper-task">Assign task to helper</button>
+        <button class="nav-btn" data-screen="helper-update">Helper update review</button>
+      </div>
+      <div class="nav-title">Support and trust</div>
+      <div class="nav-list">
+        <button class="nav-btn" data-screen="support">Support request</button>
+        <button class="nav-btn" data-screen="documents">Documents</button>
+        <button class="nav-btn" data-screen="settings">Settings and defaults</button>
+        <button class="nav-btn" data-screen="offline">Offline state</button>
+      </div>
+    </aside>
+
+    <main class="center">
+      <div class="workspace">
+        <section class="summary stack">
+          <div>
+            <div class="section-label">MVP expansion</div>
+            <h2 style="font-family:var(--font-display);font-size:30px;line-height:1.12">From concept flow to a more complete product loop.</h2>
+          </div>
+          <div class="chip-row">
+            <div class="chip">Tasks</div>
+            <div class="chip">Reminders</div>
+            <div class="chip">History</div>
+            <div class="chip">Helper collaboration</div>
+          </div>
+          <div class="soft-card">
+            <div class="section-label">What is new</div>
+            <p class="muted">The prototype now covers recurring product behaviors instead of just one-off moments: task progression, return visits, helper updates, and workspace settings.</p>
+          </div>
+          <div class="priority-card">
+            <div class="section-label">MVP lens</div>
+            <p class="muted">The goal is to test whether Zeporah can become a steady ongoing workspace, not just a beautiful initial experience.</p>
+          </div>
+        </section>
+
+        <section class="screen-layer desktop">
+          <div class="frame desktop">
+            <div class="window-top"><div class="brand" style="margin:0"><div class="mark" style="width:28px;height:28px"></div><span>Zeporah MVP prototype</span></div><div>Desktop flow</div></div>
+
+            <div class="screen active" data-screen="dashboard">
+              <div class="desktop-app">
+                <aside class="rail">
+                  <div class="rail-item active">Home <span>3</span></div>
+                  <div class="rail-item">Tasks <span>5</span></div>
+                  <div class="rail-item">People <span>1</span></div>
+                  <div class="rail-item">Support</div>
+                  <div class="rail-item">Documents</div>
+                  <div class="rail-item">Settings</div>
+                </aside>
+                <section class="main stack">
+                  <div class="eyebrow">Dashboard</div>
+                  <h1 class="hero-title">A calmer place to keep moving forward.</h1>
+                  <p class="muted" style="max-width:56ch">The deeper MVP home shows not just the first action, but the ongoing loop of priorities, reminders, helper activity, and recent progress.</p>
+                  <div class="hero-card">
+                    <div class="section-label">What matters now</div>
+                    <div style="display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap">
+                      <div>
+                        <h3 style="font-size:26px;font-family:var(--font-display);margin-bottom:6px">Confirm service details with one family member.</h3>
+                        <p class="muted" style="max-width:42ch">Zeporah narrows the next step while still showing the shape of the remaining work.</p>
+                      </div>
+                      <button class="btn primary goto" data-goto="tasks">Open task list</button>
+                    </div>
+                    <div class="kpi-grid">
+                      <div class="kpi"><div class="section-label">Open tasks</div><strong style="font-size:22px">5</strong><span class="muted">2 high priority.</span></div>
+                      <div class="kpi"><div class="section-label">Upcoming reminders</div><strong style="font-size:22px">2</strong><span class="muted">Next one tomorrow.</span></div>
+                      <div class="kpi"><div class="section-label">Helper activity</div><strong style="font-size:22px">1</strong><span class="muted">Awaiting your review.</span></div>
+                    </div>
+                  </div>
+                  <div class="content-grid">
+                    <div class="card">
+                      <div class="section-label">Recent progress</div>
+                      <div class="timeline">
+                        <div class="timeline-item"><div class="timeline-dot"></div><div><strong>Sent first family update</strong><div class="muted">Completed today.</div></div></div>
+                        <div class="timeline-item"><div class="timeline-dot"></div><div><strong>Uploaded insurance summary</strong><div class="muted">Saved privately.</div></div></div>
+                        <div class="timeline-item pending"><div class="timeline-dot"></div><div><strong>Confirm service details</strong><div class="muted">Suggested next.</div></div></div>
+                      </div>
+                    </div>
+                    <div class="soft-card">
+                      <div class="section-label">Coming up</div>
+                      <p class="muted">Tomorrow at 10:00 AM, Zeporah will remind you to review service details if this task is still open.</p>
+                    </div>
+                  </div>
+                </section>
+                <aside class="side stack">
+                  <div class="status-row"><span>Today</span><strong>2 tasks completed</strong></div>
+                  <div class="card"><div class="section-label">Helper update</div><strong>Aunt Lisa left a note on the meal train task.</strong><div style="height:10px"></div><button class="btn secondary goto" data-goto="helper-update">Review update</button></div>
+                  <div class="card"><div class="section-label">Reminder</div><strong>Service details follow-up</strong><p class="muted">Tomorrow • 10:00 AM</p></div>
+                </aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="tasks">
+              <div class="desktop-app">
+                <aside class="rail"><div class="rail-item">Home</div><div class="rail-item active">Tasks <span>5</span></div><div class="rail-item">People <span>1</span></div><div class="rail-item">Support</div><div class="rail-item">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="main stack">
+                  <div class="eyebrow">Tasks and progress</div>
+                  <h1>See what is active, what is waiting, and what can rest.</h1>
+                  <div class="task-list">
+                    <div class="task-row"><div><strong>Confirm service details with one family member</strong><div class="muted">Priority now • communication</div></div><button class="btn secondary goto" data-goto="task-detail">Open</button></div>
+                    <div class="task-row"><div><strong>Request additional death certificates</strong><div class="muted">Practical • documents</div></div><span class="badge">Later this week</span></div>
+                    <div class="task-row"><div><strong>Review insurance checklist</strong><div class="muted">Practical • private</div></div><span class="badge">Saved for later</span></div>
+                    <div class="task-row"><div><strong>Coordinate meal support</strong><div class="muted">Shared with helper</div></div><span class="badge">Helper active</span></div>
+                  </div>
+                </section>
+                <aside class="side stack"><div class="soft-card"><div class="section-label">List behavior</div><p class="muted">Tasks are grouped by emotional readiness and urgency, not just due date.</p></div></aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="task-detail">
+              <div class="desktop-app">
+                <aside class="rail"><div class="rail-item">Home</div><div class="rail-item active">Tasks <span>5</span></div><div class="rail-item">People <span>1</span></div><div class="rail-item">Support</div><div class="rail-item">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="main stack">
+                  <div class="eyebrow">Task detail</div>
+                  <h1>Confirm service details with one family member.</h1>
+                  <div class="two-col">
+                    <div class="card stack">
+                      <div class="section-label">Why this is suggested now</div>
+                      <p class="muted">This helps reduce uncertainty for close family and unlocks several later coordination tasks.</p>
+                      <div class="section-label">Suggested path</div>
+                      <ul>
+                        <li>Choose one person to contact first.</li>
+                        <li>Share the current known details.</li>
+                        <li>Mark what is still pending.</li>
+                      </ul>
+                    </div>
+                    <div class="priority-card stack">
+                      <div class="section-label">Actions</div>
+                      <button class="btn primary goto" data-goto="reminders">Set reminder if not done today</button>
+                      <button class="btn secondary open-overlay" data-overlay="overlay-complete">Mark as completed</button>
+                      <button class="btn ghost goto" data-goto="people">Ask helper to support</button>
+                    </div>
+                  </div>
+                </section>
+                <aside class="side stack"><div class="card"><div class="section-label">Related</div><strong>Meal coordination task</strong><p class="muted">Can be delegated to Aunt Lisa.</p></div></aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="reminders">
+              <div class="desktop-app">
+                <aside class="rail"><div class="rail-item">Home</div><div class="rail-item active">Tasks <span>5</span></div><div class="rail-item">People <span>1</span></div><div class="rail-item">Support</div><div class="rail-item">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="main stack">
+                  <div class="eyebrow">Reminder setup</div>
+                  <h1>Create a reminder that feels supportive, not stressful.</h1>
+                  <div class="two-col">
+                    <div class="card stack">
+                      <div class="field"><label>When should Zeporah remind you?</label><div class="select">Tomorrow at 10:00 AM</div></div>
+                      <div class="field"><label>Reminder tone</label><div class="select">Gentle nudge</div></div>
+                      <div class="field"><label>Why now?</label><div class="textarea">This task matters, but I may not have energy to finish it today.</div></div>
+                    </div>
+                    <div class="soft-card stack">
+                      <div class="section-label">Preview</div>
+                      <div class="status-row"><span>Tomorrow • 10:00 AM</span><strong>“You can return to service details when you are ready.”</strong></div>
+                      <button class="btn primary goto" data-goto="history">Save reminder</button>
+                    </div>
+                  </div>
+                </section>
+                <aside class="side stack"><div class="soft-card"><div class="section-label">Behavior</div><p class="muted">Reminder tone and cadence become part of the emotional product experience.</p></div></aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="history">
+              <div class="desktop-app">
+                <aside class="rail"><div class="rail-item active">Home</div><div class="rail-item">Tasks <span>4</span></div><div class="rail-item">People <span>1</span></div><div class="rail-item">Support</div><div class="rail-item">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="main stack">
+                  <div class="eyebrow">History and completed steps</div>
+                  <h1>See what has already been carried forward.</h1>
+                  <div class="activity">
+                    <div class="activity-item"><strong>Today • 11:42 AM</strong><div class="muted">Reminder saved for service details follow-up.</div></div>
+                    <div class="activity-item"><strong>Today • 11:10 AM</strong><div class="muted">Family update task marked complete.</div></div>
+                    <div class="activity-item"><strong>Yesterday • 7:52 PM</strong><div class="muted">Insurance summary uploaded privately.</div></div>
+                  </div>
+                  <div class="btn-row"><button class="btn secondary goto" data-goto="dashboard">Return home</button><button class="btn primary goto" data-goto="people">Continue to helper flow</button></div>
+                </section>
+                <aside class="side stack"><div class="card"><div class="section-label">Why this matters</div><p class="muted">History reinforces progress and reduces the feeling of starting over every time.</p></div></aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="people">
+              <div class="desktop-app">
+                <aside class="rail"><div class="rail-item">Home</div><div class="rail-item">Tasks <span>4</span></div><div class="rail-item active">People <span>1</span></div><div class="rail-item">Support</div><div class="rail-item">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="main stack">
+                  <div class="eyebrow">People and helper access</div>
+                  <h1>Bring one person into the work without losing control.</h1>
+                  <div class="two-col">
+                    <div class="card"><div class="section-label">Helper</div><strong>Aunt Lisa</strong><p class="muted">Can view shared tasks and approved updates.</p></div>
+                    <div class="priority-card"><div class="section-label">Current limits</div><ul><li>Private notes hidden.</li><li>Documents hidden unless approved.</li><li>Cannot invite others.</li></ul></div>
+                  </div>
+                  <div class="btn-row"><button class="btn secondary goto" data-goto="dashboard">Back home</button><button class="btn primary goto" data-goto="helper-task">Assign one task</button></div>
+                </section>
+                <aside class="side stack"><div class="card"><div class="section-label">Pending idea</div><p class="muted">The MVP can later expand to multiple helper roles, but starts with one primary helper.</p></div></aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="helper-task">
+              <div class="desktop-app">
+                <aside class="rail"><div class="rail-item">Home</div><div class="rail-item">Tasks <span>4</span></div><div class="rail-item active">People <span>1</span></div><div class="rail-item">Support</div><div class="rail-item">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="main stack">
+                  <div class="eyebrow">Assign task to helper</div>
+                  <h1>Delegate one practical task.</h1>
+                  <div class="two-col">
+                    <div class="card stack">
+                      <div class="field"><label>Task</label><div class="select">Coordinate meal support</div></div>
+                      <div class="field"><label>What should Aunt Lisa know?</label><div class="textarea">Please help organize meals for this week. You do not need access to private paperwork.</div></div>
+                    </div>
+                    <div class="soft-card stack">
+                      <div class="section-label">Shared with this task</div>
+                      <div class="status-row"><span>Task details</span><strong>Shared</strong></div>
+                      <div class="status-row"><span>Private notes</span><strong>Hidden</strong></div>
+                      <div class="status-row"><span>Documents</span><strong>Not shared</strong></div>
+                      <button class="btn primary goto" data-goto="helper-update">Assign task</button>
+                    </div>
+                  </div>
+                </section>
+                <aside class="side stack"><div class="soft-card"><div class="section-label">Pattern</div><p class="muted">Delegation uses the same trust grammar as support and document sharing.</p></div></aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="helper-update">
+              <div class="desktop-app">
+                <aside class="rail"><div class="rail-item">Home</div><div class="rail-item">Tasks <span>4</span></div><div class="rail-item active">People <span>1</span></div><div class="rail-item">Support</div><div class="rail-item">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="main stack">
+                  <div class="eyebrow">Helper update review</div>
+                  <h1>Aunt Lisa added an update to the shared task.</h1>
+                  <div class="success-card"><p>“I contacted two neighbors and one church volunteer. We have meal coverage for Monday and Tuesday.”</p></div>
+                  <div class="btn-row"><button class="btn secondary goto" data-goto="tasks">View task list</button><button class="btn primary goto" data-goto="support">Continue to support flow</button></div>
+                </section>
+                <aside class="side stack"><div class="card"><div class="section-label">Trust effect</div><p class="muted">Updates should feel useful and bounded, never invasive.</p></div></aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="support">
+              <div class="desktop-app">
+                <aside class="rail"><div class="rail-item">Home</div><div class="rail-item">Tasks <span>4</span></div><div class="rail-item">People <span>1</span></div><div class="rail-item active">Support</div><div class="rail-item">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="main stack">
+                  <div class="eyebrow">Support request</div>
+                  <h1>Ask for support while staying in control of your information.</h1>
+                  <div class="two-col">
+                    <div class="card stack">
+                      <div class="field"><label>Type of support</label><div class="select">Emotional support and guidance</div></div>
+                      <div class="field"><label>Message</label><div class="textarea">I need support understanding what can wait and what should happen this week.</div></div>
+                    </div>
+                    <div class="priority-card stack">
+                      <div class="section-label">Review sharing</div>
+                      <div class="status-row"><span>Message</span><strong>Included</strong></div>
+                      <div class="status-row"><span>Private reflections</span><strong>Not included</strong></div>
+                      <div class="status-row"><span>Documents</span><strong>None attached</strong></div>
+                      <button class="btn primary goto" data-goto="documents">Send request and continue</button>
+                    </div>
+                  </div>
+                </section>
+                <aside class="side stack"><div class="soft-card"><div class="section-label">MVP lesson</div><p class="muted">Support, tasks, and helpers should feel like connected parts of one workspace.</p></div></aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="documents">
+              <div class="desktop-app">
+                <aside class="rail"><div class="rail-item">Home</div><div class="rail-item">Tasks <span>4</span></div><div class="rail-item">People <span>1</span></div><div class="rail-item">Support</div><div class="rail-item active">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="main stack">
+                  <div class="eyebrow">Documents</div>
+                  <h1>Keep documents organized without making them public by default.</h1>
+                  <div class="three-col">
+                    <div class="card"><div class="section-label">Private</div><strong>Insurance policy summary</strong><p class="muted">Uploaded yesterday.</p></div>
+                    <div class="card"><div class="section-label">Private</div><strong>Service planning notes</strong><p class="muted">Draft information only.</p></div>
+                    <div class="priority-card"><div class="section-label">Request</div><strong>Aunt Lisa requested access to insurance summary.</strong><div style="height:10px"></div><button class="btn secondary open-overlay" data-overlay="overlay-deny">Review</button></div>
+                  </div>
+                </section>
+                <aside class="side stack"><div class="card"><div class="section-label">Rule</div><p class="muted">Sharing one document never changes access to the rest.</p></div></aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="settings">
+              <div class="desktop-app">
+                <aside class="rail"><div class="rail-item">Home</div><div class="rail-item">Tasks <span>4</span></div><div class="rail-item">People <span>1</span></div><div class="rail-item">Support</div><div class="rail-item">Documents</div><div class="rail-item active">Settings</div></aside>
+                <section class="main stack">
+                  <div class="eyebrow">Settings and defaults</div>
+                  <h1>Adjust reminders, tone, and privacy defaults.</h1>
+                  <div class="two-col">
+                    <div class="card stack">
+                      <div class="field"><label>Reminder tone</label><div class="select">Gentle</div></div>
+                      <div class="field"><label>Default helper access</label><div class="select">Tasks only until explicitly expanded</div></div>
+                      <div class="field"><label>Explanation style</label><div class="select">Plain language with short guidance</div></div>
+                    </div>
+                    <div class="soft-card stack">
+                      <div class="section-label">Why this matters</div>
+                      <p class="muted">The MVP should let users shape the emotional tempo of the product, not just the operational settings.</p>
+                      <button class="btn primary goto" data-goto="offline">Save settings</button>
+                    </div>
+                  </div>
+                </section>
+                <aside class="side stack"><div class="card"><div class="section-label">Future area</div><p class="muted">Additional caregiver roles and family sharing defaults can extend from this foundation.</p></div></aside>
+              </div>
+            </div>
+
+            <div class="screen" data-screen="offline">
+              <div class="desktop-app">
+                <aside class="rail"><div class="rail-item active">Home</div><div class="rail-item">Tasks <span>4</span></div><div class="rail-item">People <span>1</span></div><div class="rail-item">Support</div><div class="rail-item">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="main stack">
+                  <div class="eyebrow">Offline state</div>
+                  <h1>Your recent changes are safe on this device.</h1>
+                  <div class="callout"><p>Zeporah will sync your reminder and settings changes when your connection returns.</p></div>
+                  <div class="status-row"><span>Last saved change</span><strong>Reminder preferences</strong></div>
+                  <div class="status-row"><span>Sync status</span><strong>Waiting for connection</strong></div>
+                  <div class="btn-row"><button class="btn secondary goto" data-goto="settings">Back to settings</button><button class="btn primary goto" data-goto="dashboard">Return home</button></div>
+                </section>
+                <aside class="side stack"><div class="danger-card"><div class="section-label">Emergency boundary</div><p>If someone is in immediate danger or in a medical emergency, contact emergency services or a crisis resource now.</p></div></aside>
+              </div>
+            </div>
+
+            <div class="overlay" id="overlay-complete">
+              <div class="modal stack">
+                <div class="eyebrow">Complete task</div>
+                <h1 style="font-size:38px">Mark this task as done?</h1>
+                <p class="muted">This moves the task into history and updates your home dashboard.</p>
+                <div class="btn-row"><button class="btn secondary close-overlay">Not yet</button><button class="btn primary confirm-overlay" data-next="history" data-close="overlay-complete">Mark completed</button></div>
+              </div>
+            </div>
+
+            <div class="overlay" id="overlay-deny">
+              <div class="modal stack">
+                <div class="eyebrow">Review document request</div>
+                <h1 style="font-size:38px">Keep this document private?</h1>
+                <p class="muted">Aunt Lisa requested the insurance summary to help with follow-up. You can keep it private and still let her help with other tasks.</p>
+                <div class="status-row"><span>If declined</span><strong>No new document access is granted</strong></div>
+                <div class="btn-row"><button class="btn secondary close-overlay">Go back</button><button class="btn primary confirm-overlay" data-next="settings" data-close="overlay-deny">Decline for now</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="frame tablet">
+            <div class="window-top"><div class="brand" style="margin:0"><div class="mark" style="width:28px;height:28px"></div><span>Zeporah MVP prototype</span></div><div>Tablet flow</div></div>
+            <div class="stack">
+              <div class="eyebrow">Tablet adaptation</div>
+              <h1>Expanded MVP flows stay readable on tablet.</h1>
+              <div class="tablet-hero"><div class="hero-card"><div class="section-label">Primary behavior</div><strong style="display:block;font-size:28px;font-family:var(--font-display);margin-bottom:8px">Tasks, reminders, and progress remain visible together.</strong><p class="muted">Tablet keeps enough overview for support use while reducing side-panel complexity.</p></div><div class="priority-card"><div class="section-label">Trust continuity</div><p class="muted">Helper, support, and document permissions keep the same visual logic across form factor changes.</p></div></div>
+              <div class="tablet-grid"><div class="card"><div class="section-label">Ongoing loop</div><p class="muted">Home to tasks to reminder to history builds a fuller retention story.</p></div><div class="card"><div class="section-label">Collaboration loop</div><p class="muted">People to delegation to helper update shows why the product can become shared but still bounded.</p></div></div>
+            </div>
+          </div>
+
+          <div class="frame mobile">
+            <div class="window-top"><div class="brand" style="margin:0"><div class="mark" style="width:28px;height:28px"></div><span>Zeporah MVP prototype</span></div><div>Mobile flow</div></div>
+            <div class="mobile-stack">
+              <div class="eyebrow">Mobile adaptation</div>
+              <h1 style="font-size:40px;max-width:10ch">The MVP becomes a guided workspace on mobile.</h1>
+              <div class="mobile-card"><div class="section-label">Core loop</div><p class="muted">Users can move from home to task detail to reminder to history without losing the sense of progress.</p></div>
+              <div class="mobile-card"><div class="section-label">Collaboration</div><p class="muted">Delegation and helper updates become full-screen moments so privacy context stays clear.</p></div>
+              <div class="mobile-card"><div class="section-label">Settings</div><p class="muted">Reminder tone and privacy defaults remain easy to access without becoming dense preference menus.</p></div>
+              <div class="tabbar"><div class="active-tab">Home</div><div>Tasks</div><div>People</div><div>Support</div><div>Settings</div></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="right">
+      <h3>Flow notes</h3>
+      <div id="notes"></div>
+      <h3 style="margin-top:18px">Research prompts</h3>
+      <div id="prompts"></div>
+    </aside>
+  </div>
+
+  <script>
+    const notesMap = {
+      dashboard: ['The dashboard now reflects an ongoing workspace, not just a first-session landing page.', 'Recent progress, reminders, and helper updates make return visits feel meaningful.', 'This is closer to an MVP retention surface.'],
+      tasks: ['Task organization uses emotional readiness alongside urgency.', 'The list suggests a calmer model than a standard productivity app.', 'This helps differentiate the product behaviorally.'],
+      'task-detail': ['Task detail is where explanation, delegation, and reminder setup meet.', 'This is an important orchestration screen for the MVP.', 'It can become a core interaction pattern later.'],
+      reminders: ['Reminder tone is a product-defining behavior for this category.', 'The MVP should test whether users want control over phrasing and timing.', 'This is both UX and positioning.'],
+      history: ['History validates progress and lowers the mental load of re-entry.', 'It helps the product feel cumulative instead of repetitive.', 'This could support emotional reassurance over time.'],
+      people: ['This keeps collaboration in the MVP but scoped to one helper role.', 'It avoids overbuilding team complexity too early.', 'The permissions model remains central.'],
+      'helper-task': ['Delegation becomes a concrete action, not just an abstract permission state.', 'This is where Zeporah begins to feel like a real coordination tool.', 'The trust model stays item-based.'],
+      'helper-update': ['Helper updates create the sense of a living workspace.', 'Important to validate whether users find this helpful or invasive.', 'The tone must stay concise and bounded.'],
+      support: ['Support stays connected to the same trust grammar as tasks and helpers.', 'This helps the product feel coherent rather than stitched together.', 'A key MVP question is whether users understand what gets shared.'],
+      documents: ['Documents are still important, but no longer dominate the experience.', 'They support work rather than becoming the whole product.', 'This is healthier for MVP scope.'],
+      settings: ['Settings control emotional tone as much as product preferences.', 'This is unusual and strategically important for the category.', 'It may become a differentiator if users value it.'],
+      offline: ['Offline handling matters because these flows may happen in chaotic real-world conditions.', 'Reassurance-first messaging remains important.', 'This also shows product maturity.']
+    };
+
+    const promptMap = {
+      dashboard: ['Ask: “What tells you where to focus now?”', 'Ask: “Does this feel like a place you would return to?”'],
+      tasks: ['Ask: “How do you understand the difference between now, later, and shared tasks?”', 'Ask: “Does this list feel manageable?”'],
+      'task-detail': ['Ask: “What would you do from here?”', 'Ask: “Would you set a reminder, mark complete, or ask for help?”'],
+      reminders: ['Ask: “How does this reminder tone feel?”', 'Ask: “Would you want more control here?”'],
+      history: ['Ask: “What value does this history give you?”', 'Ask: “Does it help you feel progress?”'],
+      people: ['Ask: “What can Aunt Lisa do from this point?”', 'Ask: “What still feels unclear about helper access?”'],
+      'helper-task': ['Ask: “What do you think Aunt Lisa will receive?”', 'Ask: “Do you trust this delegation step?”'],
+      'helper-update': ['Ask: “Does this update feel useful or intrusive?”', 'Ask: “What would you want to do next?”'],
+      support: ['Ask: “What gives you confidence in this support flow?”', 'Ask: “What still feels sensitive?”'],
+      documents: ['Ask: “Do you understand the document boundary?”', 'Ask: “Would you know how to decline this safely?”'],
+      settings: ['Ask: “What setting here matters most to you?”', 'Ask: “Does reminder tone belong in settings?”'],
+      offline: ['Ask: “Do you trust your changes were saved?”', 'Ask: “What do you expect once the connection returns?”']
+    };
+
+    const screens = document.querySelectorAll('.screen');
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const gotoButtons = document.querySelectorAll('.goto');
+    const deviceTabs = document.querySelectorAll('.device-tab');
+    const screenLayer = document.querySelector('.screen-layer');
+    const openOverlayButtons = document.querySelectorAll('.open-overlay');
+    const closeOverlayButtons = document.querySelectorAll('.close-overlay');
+    const confirmOverlayButtons = document.querySelectorAll('.confirm-overlay');
+    const overlays = document.querySelectorAll('.overlay');
+    const notesEl = document.getElementById('notes');
+    const promptsEl = document.getElementById('prompts');
+
+    function renderSide(screen) {
+      notesEl.innerHTML = (notesMap[screen] || []).map(t => `<div class="side-card"><p class="muted">${t}</p></div>`).join('');
+      promptsEl.innerHTML = (promptMap[screen] || []).map(t => `<div class="side-card"><p class="muted">${t}</p></div>`).join('');
+    }
+
+    function closeOverlays() { overlays.forEach(o => o.classList.remove('active')); }
+
+    function showScreen(name) {
+      closeOverlays();
+      screens.forEach(screen => screen.classList.toggle('active', screen.dataset.screen === name));
+      navButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.screen === name));
+      renderSide(name);
+    }
+
+    navButtons.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.screen)));
+    gotoButtons.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.goto)));
+    deviceTabs.forEach(tab => tab.addEventListener('click', () => {
+      deviceTabs.forEach(t => t.classList.toggle('active', t === tab));
+      screenLayer.classList.remove('desktop', 'tablet', 'mobile');
+      screenLayer.classList.add(tab.dataset.device);
+    }));
+    openOverlayButtons.forEach(btn => btn.addEventListener('click', () => document.getElementById(btn.dataset.overlay).classList.add('active')));
+    closeOverlayButtons.forEach(btn => btn.addEventListener('click', closeOverlays));
+    confirmOverlayButtons.forEach(btn => btn.addEventListener('click', () => {
+      document.getElementById(btn.dataset.close).classList.remove('active');
+      showScreen(btn.dataset.next);
+    }));
+
+    showScreen('dashboard');
+  </script>
+</body>
+</html>

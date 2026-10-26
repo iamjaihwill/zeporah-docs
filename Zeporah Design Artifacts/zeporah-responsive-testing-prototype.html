@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zeporah Responsive Testing Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f3ed;
+      --surface: #fffdfa;
+      --surface-2: #f2ece3;
+      --surface-3: #ebe4d8;
+      --surface-4: #f8f5ef;
+      --primary: #2f5a53;
+      --primary-soft: #dbe8e4;
+      --secondary-soft: #efe5d7;
+      --warning-soft: #f0e3d3;
+      --danger-soft: #f2dfdf;
+      --line: #ddd3c7;
+      --line-strong: #c9bcae;
+      --text: #241e19;
+      --muted: #6d665e;
+      --faint: #9b9187;
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 26px;
+      --shadow-sm: 0 4px 12px rgba(36,30,25,.06);
+      --shadow-md: 0 18px 42px rgba(36,30,25,.09);
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+      --text-xs: 12px; --text-sm: 14px; --text-base: 16px; --text-lg: 19px; --text-xl: 30px; --text-2xl: 42px;
+      --font-body: 'Inter', Arial, sans-serif;
+      --font-display: 'Fraunces', Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      background: linear-gradient(180deg, #f7f4ee 0%, #f1ece5 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .layout { display: grid; grid-template-columns: 280px 1fr 340px; min-height: 100vh; }
+    .sidebar, .inspector {
+      background: rgba(255,253,250,.76);
+      backdrop-filter: blur(16px);
+      padding: var(--space-5);
+      overflow: auto;
+      border-right: 1px solid var(--line);
+    }
+    .inspector { border-right: none; border-left: 1px solid var(--line); }
+    .canvas { padding: var(--space-8); display: flex; justify-content: center; align-items: flex-start; }
+    .workspace { width: min(1320px, 100%); display: grid; grid-template-columns: 300px minmax(0,1fr); gap: 24px; }
+    .workspace-sidebar {
+      background: rgba(255,253,250,.9);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow-md);
+      padding: var(--space-5);
+      position: sticky;
+      top: 32px;
+      align-self: start;
+    }
+    .stage-preview {
+      background: var(--surface-2);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .device-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .device-tab {
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #fff;
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .device-tab.active { background: var(--primary-soft); border-color: #bfd0ca; }
+    .prototype-shell.desktop .device-desktop,
+    .prototype-shell.tablet .device-tablet,
+    .prototype-shell.mobile .device-mobile { display: block; }
+    .prototype-shell.desktop .device-tablet,
+    .prototype-shell.desktop .device-mobile,
+    .prototype-shell.tablet .device-desktop,
+    .prototype-shell.tablet .device-mobile,
+    .prototype-shell.mobile .device-desktop,
+    .prototype-shell.mobile .device-tablet { display: none; }
+    .device-frame {
+      background: rgba(255,253,250,.82);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      box-shadow: var(--shadow-md);
+      padding: 18px;
+    }
+    .device-desktop { min-height: 840px; }
+    .device-tablet { min-height: 900px; }
+    .device-mobile { min-height: 900px; width: 430px; margin: 0 auto; }
+    .chrome {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-5);
+      color: var(--muted); font-size: var(--text-xs); letter-spacing: .06em; text-transform: uppercase;
+    }
+    .brand-mark { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--text); }
+    .mark { width: 28px; height: 28px; border-radius: 10px; background: var(--primary-soft); border: 1px solid #c8d9d3; position: relative; }
+    .mark::before, .mark::after { content: ""; position: absolute; inset: 6px; border-radius: 8px; border: 1.5px solid var(--primary); }
+    .mark::after { inset: 10px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 999px;
+      background: var(--surface-2); color: var(--muted); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .06em; margin-bottom: var(--space-4);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--primary); }
+    h1 { margin: 0 0 var(--space-4); font-family: var(--font-display); font-size: var(--text-xl); line-height: 1.08; letter-spacing: -.02em; }
+    .desktop-screen h1 { font-size: var(--text-2xl); max-width: 14ch; }
+    p { margin: 0 0 var(--space-4); }
+    .muted { color: var(--muted); }
+    .faint { color: var(--faint); }
+    .stack > * + * { margin-top: var(--space-4); }
+    .hero-card, .card, .list-card, .note-card, .alert-card {
+      background: #fff; border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); padding: var(--space-4);
+    }
+    .hero-card { background: linear-gradient(180deg, #fffdfa 0%, #f7f2ea 100%); padding: var(--space-6); border-radius: var(--radius-lg); }
+    .soft-card { background: var(--surface-2); border: 1px solid transparent; border-radius: var(--radius-md); padding: var(--space-4); }
+    .accent-card { background: var(--primary-soft); border: 1px solid #caded7; border-radius: var(--radius-md); padding: var(--space-4); }
+    .warning-card { background: var(--warning-soft); border: 1px solid #e2cdb5; border-radius: var(--radius-md); padding: var(--space-4); }
+    .danger-card { background: var(--danger-soft); border: 1px solid #e4c2c2; border-radius: var(--radius-md); padding: var(--space-4); }
+    .section-label { font-size: var(--text-xs); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+    .btns, .nav { display: grid; gap: 10px; }
+    .btn, .nav-btn {
+      width: 100%; border: 1px solid var(--line-strong); border-radius: 16px; background: #fff; color: var(--text);
+      padding: 14px 16px; font-size: 15px; text-align: left; cursor: pointer; transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .btn:hover, .nav-btn:hover, .device-tab:hover { transform: translateY(-1px); }
+    .btn.primary { background: var(--primary); color: #f7f5f1; border-color: var(--primary); }
+    .btn.secondary { background: var(--surface-2); }
+    .btn.ghost { background: transparent; border-style: dashed; }
+    .btn.warn { background: var(--warning-soft); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px;
+      background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); font-size: 12px;
+    }
+    .priority {
+      border: 1px solid var(--line); border-radius: var(--radius-md); background: #fff; padding: 16px; cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .priority:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: var(--line-strong); }
+    .priority strong { display: block; margin-bottom: 6px; }
+    .field { display: grid; gap: 8px; }
+    .field label { font-size: var(--text-xs); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .input, .select, .textarea {
+      min-height: 50px; border: 1px solid var(--line-strong); border-radius: 14px; background: #fff; padding: 14px; font-size: 15px;
+    }
+    .textarea { min-height: 120px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin-bottom: 8px; }
+    .footer-nav {
+      position: sticky; bottom: 0; margin-top: var(--space-6); display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+      background: rgba(255,253,250,.94); border: 1px solid var(--line); border-radius: 20px; padding: 8px; backdrop-filter: blur(8px);
+    }
+    .footer-nav div { text-align: center; font-size: 11px; color: var(--muted); padding: 10px 4px; border-radius: 14px; }
+    .footer-nav .active-tab { background: var(--surface-2); color: var(--text); font-weight: 600; }
+    .desktop-app { display: grid; grid-template-columns: 250px 1fr 320px; gap: 18px; min-height: 760px; }
+    .app-rail, .app-main, .app-side {
+      background: rgba(255,255,255,.84); border: 1px solid var(--line); border-radius: 24px; padding: 18px;
+    }
+    .rail-item { padding: 12px 14px; border-radius: 14px; margin-bottom: 8px; background: transparent; border: 1px solid transparent; }
+    .rail-item.active { background: var(--surface-2); border-color: var(--line); }
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px; }
+    .kpi { background: var(--surface-2); border-radius: 18px; padding: 14px; }
+    .content-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; }
+    .tablet-app { display: grid; gap: 16px; min-height: 820px; }
+    .tablet-topnav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .tablet-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .sidebar h3, .inspector h3 { margin-top: 0; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .group-title { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 18px 0 10px; }
+    .nav-btn.active-nav { background: var(--primary-soft); border-color: #bfd0ca; }
+    .note-item, .test-item { background: rgba(255,255,255,.75); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+    .timeline { display: grid; gap: 10px; }
+    .timeline-step { display: grid; grid-template-columns: 18px 1fr; gap: 10px; align-items: start; }
+    .timeline-step .bullet { width: 12px; height: 12px; border-radius: 999px; margin-top: 4px; background: var(--primary); }
+    .timeline-step.pending .bullet { background: #d7cab7; }
+    @media (max-width: 1260px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar, .inspector { border: none; border-bottom: 1px solid var(--line); }
+      .canvas { padding: 20px; }
+      .workspace { grid-template-columns: 1fr; }
+      .workspace-sidebar { position: relative; top: auto; }
+    }
+    @media (max-width: 900px) {
+      .device-desktop, .device-tablet { display: none !important; }
+      .prototype-shell { width: 100%; }
+      .device-mobile { display: block !important; width: min(430px, 100%); }
+      .workspace { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h3>Prototype map</h3>
+      <div class="group-title">Responsive key screens</div>
+      <div class="nav">
+        <button class="nav-btn active-nav" data-target="home-responsive">Home dashboard</button>
+        <button class="nav-btn" data-target="people-responsive">People & permissions</button>
+        <button class="nav-btn" data-target="documents-responsive">Documents</button>
+        <button class="nav-btn" data-target="settings-responsive">Settings & trust</button>
+      </div>
+      <div class="group-title">Deeper states</div>
+      <div class="nav">
+        <button class="nav-btn" data-target="denied-request">Denied access request</button>
+        <button class="nav-btn" data-target="expired-invite">Expired invite link</button>
+        <button class="nav-btn" data-target="return-onboarding">Return to onboarding</button>
+        <button class="nav-btn" data-target="offline-state">Offline and reconnect</button>
+        <button class="nav-btn" data-target="urgent-state">Urgent help guardrail</button>
+      </div>
+      <div class="group-title">User testing mode</div>
+      <div class="nav">
+        <button class="nav-btn" data-target="test-task-1">Test task 1</button>
+        <button class="nav-btn" data-target="test-task-2">Test task 2</button>
+        <button class="nav-btn" data-target="test-task-3">Test task 3</button>
+      </div>
+    </aside>
+
+    <main class="canvas">
+      <div class="workspace">
+        <section class="workspace-sidebar">
+          <div class="brand-mark">
+            <div class="mark"></div>
+            <div>
+              <div style="font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);">Zeporah</div>
+              <div style="font-size:20px;font-family:var(--font-display);">Responsive prototype + test narrative.</div>
+            </div>
+          </div>
+          <div style="height:20px"></div>
+          <div class="stage-preview"><div class="section-label">What changed</div><strong>Desktop and tablet views added.</strong><div class="muted" style="font-size:14px">Key screens now show how the product scales across device sizes.</div></div>
+          <div class="stage-preview"><div class="section-label">State depth</div><strong>Deeper edge cases included.</strong><div class="muted" style="font-size:14px">Denied requests, expired invite recovery, onboarding return, offline, and urgent help are now represented.</div></div>
+          <div class="stage-preview"><div class="section-label">Research use</div><strong>Built for moderated testing.</strong><div class="muted" style="font-size:14px">Use the user-testing screens to run scenario-based sessions.</div></div>
+          <div class="device-tabs">
+            <button class="device-tab active" data-device="desktop">Desktop</button>
+            <button class="device-tab" data-device="tablet">Tablet</button>
+            <button class="device-tab" data-device="mobile">Mobile</button>
+          </div>
+          <div class="soft-card"><div class="section-label">Testing note</div><p class="muted">Keep participants in think-aloud mode and watch whether they understand privacy boundaries, next-step prioritization, and permission decisions without coaching.</p></div>
+        </section>
+
+        <section class="prototype-shell desktop">
+          <div class="device-frame device-desktop">
+            <div class="chrome"><div class="brand-mark"><div class="mark" style="width:22px;height:22px"></div><span>Zeporah desktop</span></div><div>Key screen preview</div></div>
+
+            <div id="home-responsive-desktop" class="screen desktop-screen active stack responsive-screen" data-group="home-responsive">
+              <div class="desktop-app">
+                <aside class="app-rail">
+                  <div class="rail-item active">Home</div>
+                  <div class="rail-item">People</div>
+                  <div class="rail-item">Tasks</div>
+                  <div class="rail-item">Support</div>
+                  <div class="rail-item">Documents</div>
+                  <div class="rail-item">Settings</div>
+                </aside>
+                <section class="app-main">
+                  <div class="eyebrow"><span class="dot"></span> Home dashboard</div>
+                  <h1>You do not need to do everything today.</h1>
+                  <div class="kpi-grid">
+                    <div class="kpi"><div class="section-label">Now</div><strong>3 priority tasks</strong></div>
+                    <div class="kpi"><div class="section-label">People</div><strong>1 helper invited</strong></div>
+                    <div class="kpi"><div class="section-label">Private docs</div><strong>2 stored</strong></div>
+                  </div>
+                  <div class="content-grid">
+                    <div class="hero-card"><div class="section-label">What matters now</div><strong>Tell the people who need to know</strong><p class="muted">Start with one update or one call.</p><button class="btn primary next" data-next="test-task-1">Open priority</button></div>
+                    <div class="soft-card"><div class="section-label">Gentle guidance</div><p class="muted">The dashboard intentionally narrows attention to a few actions rather than showing a giant to-do list.</p></div>
+                  </div>
+                </section>
+                <aside class="app-side">
+                  <div class="section-label">Saved for later</div>
+                  <div class="card"><strong>Estate paperwork</strong><p class="muted">Deferred until you are ready.</p></div>
+                  <div class="card" style="margin-top:12px"><strong>Insurance follow-up</strong><p class="muted">Needs one document before action.</p></div>
+                </aside>
+              </div>
+            </div>
+
+            <div id="people-responsive-desktop" class="screen desktop-screen stack responsive-screen" data-group="people-responsive">
+              <div class="desktop-app">
+                <aside class="app-rail"><div class="rail-item">Home</div><div class="rail-item active">People</div><div class="rail-item">Tasks</div><div class="rail-item">Support</div><div class="rail-item">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="app-main">
+                  <div class="eyebrow"><span class="dot"></span> People & permissions</div>
+                  <h1>Invite help without exposing everything.</h1>
+                  <div class="two-col">
+                    <div class="card"><div class="section-label">Coordinator</div><strong>You</strong><p class="muted">Full control.</p></div>
+                    <div class="card"><div class="section-label">Helper</div><strong>Aunt Lisa</strong><p class="muted">Selected tasks and shared updates only.</p></div>
+                  </div>
+                  <div class="soft-card"><ul><li>Private notes stay hidden.</li><li>Documents stay hidden unless individually shared.</li><li>Helpers cannot invite others by default.</li></ul></div>
+                </section>
+                <aside class="app-side"><div class="section-label">Pending</div><div class="card"><strong>Invite awaiting acceptance</strong><p class="muted">Sent today at 11:50 AM.</p></div></aside>
+              </div>
+            </div>
+
+            <div id="documents-responsive-desktop" class="screen desktop-screen stack responsive-screen" data-group="documents-responsive">
+              <div class="desktop-app">
+                <aside class="app-rail"><div class="rail-item">Home</div><div class="rail-item">People</div><div class="rail-item">Tasks</div><div class="rail-item">Support</div><div class="rail-item active">Documents</div><div class="rail-item">Settings</div></aside>
+                <section class="app-main">
+                  <div class="eyebrow"><span class="dot"></span> Documents</div>
+                  <h1>Keep essential documents together.</h1>
+                  <div class="two-col">
+                    <div class="list-card"><div class="section-label">Private</div><strong>Death certificate request form</strong><p class="muted">Only you can see this right now.</p></div>
+                    <div class="list-card"><div class="section-label">Private</div><strong>Insurance policy summary</strong><p class="muted">Uploaded yesterday.</p></div>
+                  </div>
+                  <div class="btns"><button class="btn primary next" data-next="denied-request">Review a share request</button></div>
+                </section>
+                <aside class="app-side"><div class="section-label">Principle</div><div class="soft-card"><p class="muted">Sharing is item-level, not workspace-level.</p></div></aside>
+              </div>
+            </div>
+
+            <div id="settings-responsive-desktop" class="screen desktop-screen stack responsive-screen" data-group="settings-responsive">
+              <div class="desktop-app">
+                <aside class="app-rail"><div class="rail-item">Home</div><div class="rail-item">People</div><div class="rail-item">Tasks</div><div class="rail-item">Support</div><div class="rail-item">Documents</div><div class="rail-item active">Settings</div></aside>
+                <section class="app-main">
+                  <div class="eyebrow"><span class="dot"></span> Settings & trust</div>
+                  <h1>Adjust the experience without losing control.</h1>
+                  <div class="two-col">
+                    <div class="list-card"><div class="section-label">Experience</div><strong>Language and reminders</strong><p class="muted">Text size, explanation style, reminder frequency.</p></div>
+                    <div class="list-card"><div class="section-label">Trust</div><strong>Visibility defaults and sharing approvals</strong><p class="muted">Control what stays private and what needs confirmation.</p></div>
+                  </div>
+                </section>
+                <aside class="app-side"><div class="section-label">Recent activity</div><div class="card"><strong>Support request shared</strong><p class="muted">Today • approved by you</p></div></aside>
+              </div>
+            </div>
+
+            <div id="denied-request-desktop" class="screen desktop-screen stack responsive-screen" data-group="denied-request">
+              <div class="eyebrow"><span class="dot"></span> Denied request</div>
+              <h1>You chose not to share this document.</h1>
+              <div class="warning-card"><p>The access request was declined. Aunt Lisa will not be able to see the insurance document unless you change this later.</p></div>
+              <div class="btns"><button class="btn primary">Keep it private</button><button class="btn secondary">Share a different document instead</button></div>
+            </div>
+
+            <div id="expired-invite-desktop" class="screen desktop-screen stack responsive-screen" data-group="expired-invite">
+              <div class="eyebrow"><span class="dot"></span> Expired link</div>
+              <h1>This invite link expired.</h1>
+              <div class="warning-card"><p>The link for Aunt Lisa is no longer active. You can send a new invite without changing her intended permissions.</p></div>
+              <div class="btns"><button class="btn primary">Send a new invite</button><button class="btn ghost">Cancel this invite</button></div>
+            </div>
+
+            <div id="return-onboarding-desktop" class="screen desktop-screen stack responsive-screen" data-group="return-onboarding">
+              <div class="eyebrow"><span class="dot"></span> Return flow</div>
+              <h1>Pick up where you left off.</h1>
+              <div class="accent-card"><p>You started setting up a family space yesterday. Zeporah saved your progress privately and can resume from the last completed step.</p></div>
+              <div class="timeline"><div class="timeline-step"><div class="bullet"></div><div><strong>Privacy overview completed</strong><div class="muted">Saved yesterday</div></div></div><div class="timeline-step"><div class="bullet"></div><div><strong>Basic family details added</strong><div class="muted">Saved yesterday</div></div></div><div class="timeline-step pending"><div class="bullet"></div><div><strong>Still left to finish</strong><div class="muted">Workspace naming and private defaults</div></div></div></div>
+              <div class="btns"><button class="btn primary">Resume setup</button><button class="btn ghost">Start over</button></div>
+            </div>
+
+            <div id="offline-state-desktop" class="screen desktop-screen stack responsive-screen" data-group="offline-state">
+              <div class="eyebrow"><span class="dot"></span> Offline</div>
+              <h1>You are offline right now.</h1>
+              <div class="warning-card"><p>Your recent edits were saved on this device and will sync when your connection returns.</p></div>
+              <div class="btns"><button class="btn primary">Try again</button><button class="btn ghost">Keep working offline</button></div>
+            </div>
+
+            <div id="urgent-state-desktop" class="screen desktop-screen stack responsive-screen" data-group="urgent-state">
+              <div class="eyebrow"><span class="dot"></span> Safety guardrail</div>
+              <h1>Zeporah is not for emergencies.</h1>
+              <div class="danger-card"><p>If someone is in immediate danger, having a medical emergency, or at risk of self-harm, contact emergency services or a crisis line now.</p></div>
+              <div class="btns"><button class="btn primary">Call emergency services</button><button class="btn secondary">Open crisis resources</button></div>
+            </div>
+
+            <div id="test-task-1-desktop" class="screen desktop-screen stack responsive-screen" data-group="test-task-1">
+              <div class="eyebrow"><span class="dot"></span> User test 1</div>
+              <h1>Scenario: Find the first thing to do.</h1>
+              <div class="soft-card"><p class="muted">Prompt: “You just entered the workspace for the first time after a recent loss. Show how you would figure out what to do first.”</p></div>
+              <div class="card"><div class="section-label">Observe</div><ul><li>Do they understand the dashboard hierarchy?</li><li>Do they notice the “What matters now” framing?</li><li>Do they feel calmed or overwhelmed?</li></ul></div>
+            </div>
+
+            <div id="test-task-2-desktop" class="screen desktop-screen stack responsive-screen" data-group="test-task-2">
+              <div class="eyebrow"><span class="dot"></span> User test 2</div>
+              <h1>Scenario: Invite help without oversharing.</h1>
+              <div class="soft-card"><p class="muted">Prompt: “You want Aunt Lisa to help with practical next steps, but you do not want her to see all your private information. Show what you would do.”</p></div>
+              <div class="card"><div class="section-label">Observe</div><ul><li>Do they go to People naturally?</li><li>Do they understand role and permission boundaries?</li><li>Do they trust the invite flow?</li></ul></div>
+            </div>
+
+            <div id="test-task-3-desktop" class="screen desktop-screen stack responsive-screen" data-group="test-task-3">
+              <div class="eyebrow"><span class="dot"></span> User test 3</div>
+              <h1>Scenario: Ask for support safely.</h1>
+              <div class="soft-card"><p class="muted">Prompt: “You need emotional support, but you want to understand exactly what information will be shared before asking for help.”</p></div>
+              <div class="card"><div class="section-label">Observe</div><ul><li>Do they find support from the right place?</li><li>Do they understand the consent review state?</li><li>Do they trust that private notes stay private?</li></ul></div>
+            </div>
+          </div>
+
+          <div class="device-frame device-tablet">
+            <div class="chrome"><div class="brand-mark"><div class="mark" style="width:22px;height:22px"></div><span>Zeporah tablet</span></div><div>Adaptive view</div></div>
+            <div id="tablet-preview" class="tablet-app stack">
+              <div class="eyebrow"><span class="dot"></span> Tablet adaptation</div>
+              <h1>Balanced between focus and overview.</h1>
+              <div class="tablet-topnav"><div class="soft-card">Home</div><div class="soft-card">People</div><div class="soft-card">Tasks</div><div class="soft-card">Settings</div></div>
+              <div class="tablet-card-grid"><div class="hero-card"><strong>Priority card</strong><p class="muted">The main action stays prominent.</p></div><div class="soft-card"><strong>Sidebar content stacks below</strong><p class="muted">Secondary context is still available but less dominant than on desktop.</p></div></div>
+              <div class="tablet-card-grid"><div class="card"><strong>Permission summary</strong><p class="muted">Role and access context remains visible in grouped cards.</p></div><div class="card"><strong>Document summary</strong><p class="muted">Private item state stays explicit.</p></div></div>
+            </div>
+          </div>
+
+          <div class="device-frame device-mobile">
+            <div class="chrome"><div class="brand-mark"><div class="mark" style="width:22px;height:22px"></div><span>Zeporah mobile</span></div><div>Adaptive view</div></div>
+            <div id="mobile-preview" class="stack">
+              <div class="eyebrow"><span class="dot"></span> Mobile adaptation</div>
+              <h1>One thing at a time.</h1>
+              <div class="hero-card"><p class="muted">On mobile, the interface collapses to a single primary content stream so users can act without managing competing panels.</p></div>
+              <div class="priority"><div class="section-label">What matters now</div><strong>Tell the people who need to know</strong><span class="muted">Start with one update or one call.</span></div>
+              <div class="soft-card"><p class="muted">Permissions, saved items, and support status move into focused detail screens instead of side panels.</p></div>
+              <div class="footer-nav"><div class="active-tab">Home</div><div>People</div><div>Tasks</div><div>Support</div><div>Settings</div></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="inspector">
+      <h3>Review notes</h3>
+      <div id="notes"></div>
+      <h3 style="margin-top:20px">Test prompts</h3>
+      <div id="testPrompts"></div>
+    </aside>
+  </div>
+
+  <script>
+    const notesMap = {
+      'home-responsive': ['Shows how the calm dashboard scales to a multi-panel desktop layout.', 'Desktop adds overview without creating noise.', 'Mobile and tablet variants simplify rather than shrink.'],
+      'people-responsive': ['Demonstrates collaboration in a larger workspace layout.', 'Permission meaning stays readable at desktop scale.', 'Useful for team and stakeholder walkthroughs.'],
+      'documents-responsive': ['Shows document handling as a core product surface.', 'Desktop gives room for lists, context, and item actions.', 'Highlights item-level privacy model.'],
+      'settings-responsive': ['Settings and trust become more legible at larger breakpoints.', 'Desktop supports side-by-side management patterns.', 'Useful for future admin and caregiver expansion.'],
+      'denied-request': ['Denied state avoids ambiguity.', 'Shows the product can say no while remaining calm.', 'Important trust edge case.'],
+      'expired-invite': ['Invite-link recovery state.', 'Important for async collaboration reality.', 'Prevents silent failure.'],
+      'return-onboarding': ['Resume-flow state for interrupted onboarding.', 'Shows that setup progress is recoverable.', 'Good for first-week retention thinking.'],
+      'offline-state': ['Connectivity edge case.', 'Frames local save and sync calmly.', 'Supports resilience story.'],
+      'urgent-state': ['Safety guardrail state.', 'Draws a hard boundary around emergencies.', 'Important for risk management.'],
+      'test-task-1': ['Moderated task for information hierarchy.', 'Tests whether the product reduces overwhelm.', 'Best paired with think-aloud prompts.'],
+      'test-task-2': ['Moderated task for collaboration trust.', 'Tests navigation and permission comprehension.', 'Useful for validating role model clarity.'],
+      'test-task-3': ['Moderated task for support and consent.', 'Tests whether sharing boundaries are understood.', 'Useful for validating trust before referral flow.']
+    };
+
+    const testingMap = {
+      'home-responsive': ['Ask: “What do you think this product is for?”', 'Ask: “What would you do first here?”'],
+      'people-responsive': ['Ask: “Who do you think can see what?”', 'Ask: “How confident are you that Aunt Lisa cannot see everything?”'],
+      'documents-responsive': ['Ask: “What tells you these documents are private?”', 'Ask: “How would you share just one item?”'],
+      'settings-responsive': ['Ask: “Where would you go to change privacy defaults?”', 'Ask: “What feels account-related versus workspace-related?”'],
+      'denied-request': ['Ask: “What just happened?”', 'Ask: “Does this feel reversible?”'],
+      'expired-invite': ['Ask: “What would you do next?”', 'Ask: “Do you trust that permissions stay the same?”'],
+      'return-onboarding': ['Ask: “Do you know where you are re-entering?”', 'Ask: “Would you resume or start over?”'],
+      'offline-state': ['Ask: “Do you believe your work is safe?”', 'Ask: “What do you think will happen when connection returns?”'],
+      'urgent-state': ['Ask: “What is this screen telling you not to do?”', 'Ask: “What action feels most obvious?”'],
+      'test-task-1': ['Moderator: keep silent after the prompt.', 'Record whether participant chooses the priority card quickly.'],
+      'test-task-2': ['Moderator: ask why they trust or distrust the invite flow.', 'Record whether they look for permission details before sending.'],
+      'test-task-3': ['Moderator: ask what they think will be shared.', 'Record whether they notice the consent review step.']
+    };
+
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const nextButtons = document.querySelectorAll('.next');
+    const notesEl = document.getElementById('notes');
+    const testPromptsEl = document.getElementById('testPrompts');
+    const deviceTabs = document.querySelectorAll('.device-tab');
+    const prototypeShell = document.querySelector('.prototype-shell');
+    const allScreens = document.querySelectorAll('.responsive-screen');
+
+    function renderSidePanels(group) {
+      const notes = notesMap[group] || [];
+      const prompts = testingMap[group] || [];
+      notesEl.innerHTML = notes.map(item => `<div class="note-item"><p class="muted" style="margin:0">${item}</p></div>`).join('');
+      testPromptsEl.innerHTML = prompts.map(item => `<div class="test-item"><p class="muted" style="margin:0">${item}</p></div>`).join('');
+    }
+
+    function showGroup(group) {
+      allScreens.forEach(screen => screen.classList.toggle('active', screen.dataset.group === group));
+      navButtons.forEach(btn => btn.classList.toggle('active-nav', btn.dataset.target === group));
+      renderSidePanels(group);
+    }
+
+    navButtons.forEach(btn => btn.addEventListener('click', () => showGroup(btn.dataset.target)));
+    nextButtons.forEach(btn => btn.addEventListener('click', () => showGroup(btn.dataset.next)));
+    deviceTabs.forEach(tab => tab.addEventListener('click', () => {
+      deviceTabs.forEach(t => t.classList.toggle('active', t === tab));
+      prototypeShell.classList.remove('desktop', 'tablet', 'mobile');
+      prototypeShell.classList.add(tab.dataset.device);
+    }));
+
+    renderSidePanels('home-responsive');
+  </script>
+</body>
+</html>

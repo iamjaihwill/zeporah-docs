@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zeporah Fuller Product Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f3ed;
+      --surface: #fffdfa;
+      --surface-2: #f2ece3;
+      --surface-3: #ebe4d8;
+      --surface-4: #f8f5ef;
+      --primary: #2f5a53;
+      --primary-soft: #dbe8e4;
+      --secondary-soft: #efe5d7;
+      --warning-soft: #f0e3d3;
+      --danger-soft: #f2dfdf;
+      --line: #ddd3c7;
+      --line-strong: #c9bcae;
+      --text: #241e19;
+      --muted: #6d665e;
+      --faint: #9b9187;
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 26px;
+      --shadow-sm: 0 4px 12px rgba(36,30,25,.06);
+      --shadow-md: 0 18px 42px rgba(36,30,25,.09);
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+      --text-xs: 12px; --text-sm: 14px; --text-base: 16px; --text-lg: 19px; --text-xl: 30px;
+      --font-body: 'Inter', Arial, sans-serif;
+      --font-display: 'Fraunces', Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      background: linear-gradient(180deg, #f7f4ee 0%, #f1ece5 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .layout { display: grid; grid-template-columns: 300px 1fr 330px; min-height: 100vh; }
+    .sidebar, .inspector {
+      background: rgba(255,253,250,.75);
+      backdrop-filter: blur(16px);
+      padding: var(--space-5);
+      overflow: auto;
+      border-right: 1px solid var(--line);
+    }
+    .inspector { border-right: none; border-left: 1px solid var(--line); }
+    .canvas { padding: var(--space-8); display: flex; justify-content: center; align-items: flex-start; }
+    .shell { width: min(1260px, 100%); display: grid; grid-template-columns: 340px 1fr; gap: 24px; }
+    .desktop-panel {
+      background: rgba(255,253,250,.88);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow-md);
+      padding: var(--space-5);
+      position: sticky;
+      top: 32px;
+    }
+    .phone {
+      width: 430px;
+      min-height: 900px;
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      border-radius: 36px;
+      box-shadow: var(--shadow-md);
+      padding: 18px;
+      position: relative;
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-5);
+      font-size: var(--text-xs); color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+    }
+    .brand-mark { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--text); }
+    .mark {
+      width: 28px; height: 28px; border-radius: 10px; background: var(--primary-soft); border: 1px solid #c8d9d3; position: relative;
+    }
+    .mark::before, .mark::after {
+      content: ""; position: absolute; inset: 6px; border-radius: 8px; border: 1.5px solid var(--primary);
+    }
+    .mark::after { inset: 10px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 999px;
+      background: var(--surface-2); color: var(--muted); font-size: var(--text-xs); letter-spacing: .06em; text-transform: uppercase; margin-bottom: var(--space-4);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--primary); }
+    h1 {
+      margin: 0 0 var(--space-4); font-family: var(--font-display); font-weight: 600; font-size: var(--text-xl); line-height: 1.08; letter-spacing: -.02em;
+    }
+    p { margin: 0 0 var(--space-4); }
+    .muted { color: var(--muted); }
+    .faint { color: var(--faint); }
+    .stack > * + * { margin-top: var(--space-4); }
+    .hero-card, .card, .list-card, .note-card, .alert-card {
+      background: #fff; border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); padding: var(--space-4);
+    }
+    .hero-card { background: linear-gradient(180deg, #fffdfa 0%, #f7f2ea 100%); padding: var(--space-5); border-radius: var(--radius-lg); }
+    .soft-card { background: var(--surface-2); border: 1px solid transparent; border-radius: var(--radius-md); padding: var(--space-4); }
+    .accent-card { background: var(--primary-soft); border: 1px solid #caded7; border-radius: var(--radius-md); padding: var(--space-4); }
+    .warning-card { background: var(--warning-soft); border: 1px solid #e2cdb5; border-radius: var(--radius-md); padding: var(--space-4); }
+    .danger-card { background: var(--danger-soft); border: 1px solid #e4c2c2; border-radius: var(--radius-md); padding: var(--space-4); }
+    .section-label { font-size: var(--text-xs); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+    .btns, .nav { display: grid; gap: 10px; }
+    .btn, .nav-btn {
+      width: 100%; border: 1px solid var(--line-strong); border-radius: 16px; background: #fff; color: var(--text);
+      padding: 14px 16px; font-size: 15px; text-align: left; cursor: pointer; transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .btn:hover, .nav-btn:hover { transform: translateY(-1px); }
+    .btn.primary { background: var(--primary); color: #f7f5f1; border-color: var(--primary); }
+    .btn.secondary { background: var(--surface-2); }
+    .btn.ghost { background: transparent; border-style: dashed; }
+    .btn.warn { background: var(--warning-soft); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px;
+      background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); font-size: 12px;
+    }
+    .priority {
+      border: 1px solid var(--line); border-radius: var(--radius-md); background: #fff; padding: 16px; cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .priority:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: var(--line-strong); }
+    .priority strong { display: block; margin-bottom: 6px; }
+    .field { display: grid; gap: 8px; }
+    .field label { font-size: var(--text-xs); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .input, .select, .textarea {
+      min-height: 50px; border: 1px solid var(--line-strong); border-radius: 14px; background: #fff; padding: 14px; font-size: 15px;
+    }
+    .textarea { min-height: 120px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin-bottom: 8px; }
+    .footer-nav {
+      position: sticky; bottom: 0; margin-top: var(--space-6); display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+      background: rgba(255,253,250,.94); border: 1px solid var(--line); border-radius: 20px; padding: 8px; backdrop-filter: blur(8px);
+    }
+    .footer-nav div { text-align: center; font-size: 11px; color: var(--muted); padding: 10px 4px; border-radius: 14px; }
+    .footer-nav .active-tab { background: var(--surface-2); color: var(--text); font-weight: 600; }
+    .sidebar h3, .inspector h3 { margin-top: 0; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .group-title { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 18px 0 10px; }
+    .nav-btn.active-nav { background: var(--primary-soft); border-color: #bfd0ca; }
+    .note-item { background: rgba(255,255,255,.75); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+    .summary-card { background: var(--surface-2); border-radius: 18px; padding: 14px; }
+    .desktop-summary { display: grid; gap: 12px; }
+    .status-line { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12px; }
+    .timeline { display: grid; gap: 10px; }
+    .timeline-step { display: grid; grid-template-columns: 18px 1fr; gap: 10px; align-items: start; }
+    .timeline-step .bullet { width: 12px; height: 12px; border-radius: 999px; margin-top: 4px; background: var(--primary); }
+    .timeline-step.pending .bullet { background: #d7cab7; }
+    @media (max-width: 1240px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar, .inspector { border: none; border-bottom: 1px solid var(--line); }
+      .canvas { padding: 20px; }
+      .shell { grid-template-columns: 1fr; }
+      .desktop-panel { position: relative; top: auto; }
+      .phone { width: min(430px, 100%); }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h3>Prototype map</h3>
+      <div class="group-title">Entry & home</div>
+      <div class="nav">
+        <button class="nav-btn active-nav" data-target="welcome">Welcome</button>
+        <button class="nav-btn" data-target="privacy">Privacy overview</button>
+        <button class="nav-btn" data-target="home">Home dashboard</button>
+        <button class="nav-btn" data-target="emptyhome">Home empty state</button>
+      </div>
+      <div class="group-title">Tasks & support</div>
+      <div class="nav">
+        <button class="nav-btn" data-target="task">Task detail</button>
+        <button class="nav-btn" data-target="taskpaused">Task saved state</button>
+        <button class="nav-btn" data-target="support">Support options</button>
+        <button class="nav-btn" data-target="requestpreview">Support request preview</button>
+        <button class="nav-btn" data-target="requestsent">Support request sent</button>
+        <button class="nav-btn" data-target="requeststatus">Support request status</button>
+      </div>
+      <div class="group-title">Collaboration</div>
+      <div class="nav">
+        <button class="nav-btn" data-target="people">People</button>
+        <button class="nav-btn" data-target="invite">Invite helper</button>
+        <button class="nav-btn" data-target="permissions">Permissions</button>
+        <button class="nav-btn" data-target="pendinginvite">Pending invite</button>
+        <button class="nav-btn" data-target="accessrequest">Access request review</button>
+      </div>
+      <div class="group-title">Private information</div>
+      <div class="nav">
+        <button class="nav-btn" data-target="notes">Private notes</button>
+        <button class="nav-btn" data-target="documents">Documents</button>
+        <button class="nav-btn" data-target="docdetail">Document detail</button>
+        <button class="nav-btn" data-target="docshare">Document share review</button>
+      </div>
+      <div class="group-title">Controls & edge cases</div>
+      <div class="nav">
+        <button class="nav-btn" data-target="settings">Settings</button>
+        <button class="nav-btn" data-target="trust">Trust controls</button>
+        <button class="nav-btn" data-target="sharing">Sharing activity</button>
+        <button class="nav-btn" data-target="offline">Offline / reconnect</button>
+        <button class="nav-btn" data-target="urgent">Urgent help guardrail</button>
+      </div>
+    </aside>
+
+    <main class="canvas">
+      <div class="shell">
+        <section class="desktop-panel">
+          <div class="brand-mark">
+            <div class="mark"></div>
+            <div>
+              <div style="font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);">Zeporah</div>
+              <div style="font-size:20px;font-family:var(--font-display);">A fuller state-based product prototype.</div>
+            </div>
+          </div>
+          <div style="height:20px"></div>
+          <div class="desktop-summary">
+            <div class="summary-card"><div class="section-label">Prototype purpose</div><strong>Test flows, not just screens.</strong><div class="muted" style="font-size:14px">This version adds empty states, sent states, review states, access governance, and safety edge cases.</div></div>
+            <div class="summary-card"><div class="section-label">What to review</div><div class="muted" style="font-size:14px">Whether the product remains calm and trustworthy even when something is incomplete, pending, denied, or urgent.</div></div>
+            <div class="summary-card"><div class="section-label">Key product promise</div><div class="muted" style="font-size:14px">Private by default, explicit sharing, gentle guidance, and humane handling of sensitive moments.</div></div>
+          </div>
+        </section>
+
+        <section class="phone">
+          <div class="topbar"><div class="brand-mark" style="gap:8px"><div class="mark" style="width:22px;height:22px"></div><span>Zeporah</span></div><div>Fuller prototype</div></div>
+
+          <section id="welcome" class="screen active stack">
+            <div class="eyebrow"><span class="dot"></span> Private by default</div>
+            <div class="hero-card"><h1>A private place to organize what comes next.</h1><p class="muted">Zeporah helps families move through practical next steps without exposing private information or forcing everything into one overwhelming checklist.</p></div>
+            <div class="soft-card"><div class="section-label">What this helps with</div><ul><li>Know what matters now.</li><li>Keep notes and documents in one place.</li><li>Ask for help without oversharing.</li></ul></div>
+            <div class="btns"><button class="btn primary next" data-next="privacy">Create a private family space</button><button class="btn secondary next" data-next="privacy">Learn how privacy works</button></div>
+          </section>
+
+          <section id="privacy" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Trust model</div>
+            <h1>Your family space stays private unless you choose to share.</h1>
+            <div class="two-col"><div class="card"><div class="section-label">You control access</div><strong>People only see what you allow.</strong><p class="muted">Roles and visibility can change later.</p></div><div class="card"><div class="section-label">Support is consent-based</div><strong>Nothing is sent automatically.</strong><p class="muted">Requests are reviewed before anything leaves your space.</p></div></div>
+            <div class="btns"><button class="btn primary next" data-next="home">Continue</button></div>
+          </section>
+
+          <section id="home" class="screen stack">
+            <div class="status-line"><span>Mom’s next steps</span><span>Recent loss</span></div>
+            <h1>You do not need to do everything today.</h1>
+            <p class="muted">Start with a few things that matter now. Everything else can wait until there is more room.</p>
+            <div class="priority next" data-next="task"><div class="section-label">What matters now</div><strong>Tell the people who need to know</strong><span class="muted">Start with one update or one call.</span></div>
+            <div class="priority next" data-next="people"><div class="section-label">Trusted help</div><strong>Invite someone to help</strong><span class="muted">Set clear access boundaries before they enter.</span></div>
+            <div class="priority next" data-next="documents"><div class="section-label">Important information</div><strong>Keep documents in one place</strong><span class="muted">Store key forms and records privately.</span></div>
+            <div class="priority next" data-next="notes"><div class="section-label">Private capture</div><strong>Write private notes</strong><span class="muted">Save details without sharing them.</span></div>
+            <div class="footer-nav"><div class="active-tab">Home</div><div>People</div><div>Tasks</div><div>Support</div><div>Settings</div></div>
+          </section>
+
+          <section id="emptyhome" class="screen stack">
+            <div class="status-line"><span>New family space</span><span>No tasks yet</span></div>
+            <h1>There is nothing here yet, and that is okay.</h1>
+            <div class="soft-card"><p class="muted">Zeporah can suggest a starting point when you are ready, or you can add your own first task, note, or document.</p></div>
+            <div class="btns"><button class="btn primary">Suggest a first step</button><button class="btn secondary">Add a private note</button><button class="btn ghost">Upload a first document</button></div>
+            <div class="footer-nav"><div class="active-tab">Home</div><div>People</div><div>Tasks</div><div>Support</div><div>Settings</div></div>
+          </section>
+
+          <section id="task" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Task detail</div>
+            <h1>Tell the people who need to know</h1>
+            <div class="row"><div class="chip">Visible to: Only me</div><div class="chip">Due this week</div></div>
+            <div class="card"><div class="section-label">Draft message</div><p>I wanted to let you know that Mom passed away. I am taking things one step at a time and will share more when I can.</p></div>
+            <div class="soft-card"><div class="section-label">Gentle guidance</div><p class="muted">You do not need to notify everyone at once. Starting with one person is enough for now.</p></div>
+            <div class="btns"><button class="btn primary">Mark complete</button><button class="btn secondary">Ask someone to help</button><button class="btn ghost next" data-next="taskpaused">Save and come back later</button><button class="btn ghost next" data-next="support">I need help with this</button></div>
+          </section>
+
+          <section id="taskpaused" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Progress saved</div>
+            <h1>Your progress is saved.</h1>
+            <div class="accent-card"><p>You can leave this here and come back later. The draft message was saved privately and has not been sent to anyone.</p></div>
+            <div class="btns"><button class="btn primary next" data-next="home">Return home</button><button class="btn secondary next" data-next="task">Keep working on this task</button><button class="btn ghost next" data-next="support">See support options</button></div>
+          </section>
+
+          <section id="support" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Support options</div>
+            <h1>Support that may help right now.</h1>
+            <p class="muted">These options are shown because you asked for help. Nothing is shared unless you choose to send a request.</p>
+            <div class="list-card"><div class="section-label">Bereavement support</div><strong>Emotional support and grief conversation</strong><p class="muted">A connection can be requested without sharing your notes, tasks, or documents.</p><div class="btns"><button class="btn primary next" data-next="requestpreview">Request connection</button><button class="btn ghost">Contact independently</button></div></div>
+            <div class="list-card"><div class="section-label">Practical caregiver support</div><strong>Help with next steps and responsibilities</strong><p class="muted">Useful when tasks feel too hard to sort through alone.</p></div>
+            <div class="warning-card"><div class="section-label">Need something urgent?</div><p>If there is immediate danger or a medical emergency, use urgent help instead of waiting for a support request.</p><button class="btn warn next" data-next="urgent">Urgent help</button></div>
+          </section>
+
+          <section id="requestpreview" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Review request</div>
+            <h1>Review this request before sending.</h1>
+            <div class="card"><div class="section-label">Will be shared</div><ul><li>Your name</li><li>Preferred contact method</li><li>Preferred contact time</li><li>Optional short message</li></ul></div>
+            <div class="soft-card"><div class="section-label">Will not be shared</div><p class="muted">Private notes, private documents, full task details, and family updates will stay in your space.</p></div>
+            <div class="btns"><button class="btn primary next" data-next="requestsent">Send my request</button><button class="btn ghost next" data-next="support">Back</button></div>
+          </section>
+
+          <section id="requestsent" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Sent</div>
+            <h1>Your request was sent.</h1>
+            <div class="accent-card"><p>Zeporah shared only the request details you reviewed. No private notes or documents were included.</p></div>
+            <div class="btns"><button class="btn primary next" data-next="requeststatus">View request status</button><button class="btn ghost next" data-next="task">Return to my task</button></div>
+          </section>
+
+          <section id="requeststatus" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Request status</div>
+            <h1>Your support request.</h1>
+            <div class="timeline">
+              <div class="timeline-step"><div class="bullet"></div><div><strong>Request received</strong><div class="muted">Today at 11:42 AM</div></div></div>
+              <div class="timeline-step"><div class="bullet"></div><div><strong>Recipient notified</strong><div class="muted">Today at 11:44 AM</div></div></div>
+              <div class="timeline-step pending"><div class="bullet"></div><div><strong>Awaiting response</strong><div class="muted">Updates appear here if available.</div></div></div>
+            </div>
+            <div class="btns"><button class="btn secondary">Review what I shared</button><button class="btn primary next" data-next="support">See other support options</button></div>
+          </section>
+
+          <section id="people" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Collaboration</div>
+            <h1>People in this family space.</h1>
+            <p class="muted">Invite only the people who should help, then set what they can see before they join.</p>
+            <div class="card"><div class="section-label">Coordinator</div><strong>You</strong><p class="muted">Full control over tasks, documents, privacy defaults, and sharing decisions.</p></div>
+            <div class="card next" data-next="permissions"><div class="section-label">Helper</div><strong>Aunt Lisa</strong><p class="muted">Can see selected tasks and shared updates only.</p></div>
+            <div class="btns"><button class="btn primary next" data-next="invite">Invite someone</button><button class="btn ghost next" data-next="pendinginvite">Review pending invites</button></div>
+            <div class="footer-nav"><div>Home</div><div class="active-tab">People</div><div>Tasks</div><div>Support</div><div>Settings</div></div>
+          </section>
+
+          <section id="invite" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Invite helper</div>
+            <h1>Invite someone without opening the whole space.</h1>
+            <div class="field"><label>Name</label><div class="input">Aunt Lisa</div></div>
+            <div class="field"><label>Email or phone</label><div class="input">lisa@example.com</div></div>
+            <div class="field"><label>Role</label><div class="select">Helper</div></div>
+            <div class="field"><label>Access summary</label><div class="textarea">Selected tasks, shared updates, and support coordination only.</div></div>
+            <div class="btns"><button class="btn primary next" data-next="permissions">Review permissions</button><button class="btn ghost next" data-next="pendinginvite">Save draft invite</button></div>
+          </section>
+
+          <section id="permissions" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Person permissions</div>
+            <h1>Aunt Lisa can help without seeing everything.</h1>
+            <div class="soft-card"><ul><li>Can see selected tasks.</li><li>Can receive shared updates.</li><li>Cannot see private notes.</li><li>Cannot see private documents.</li><li>Cannot invite other people.</li></ul></div>
+            <div class="btns"><button class="btn secondary">Adjust access</button><button class="btn primary next" data-next="people">Done</button></div>
+          </section>
+
+          <section id="pendinginvite" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Pending invite</div>
+            <h1>The invite was sent but not accepted yet.</h1>
+            <div class="card"><div class="section-label">Aunt Lisa</div><strong>Helper invite pending</strong><p class="muted">Sent today at 11:50 AM • limited access will apply after acceptance.</p></div>
+            <div class="btns"><button class="btn secondary">Resend invite</button><button class="btn ghost">Cancel invite</button><button class="btn primary next" data-next="people">Back to people</button></div>
+          </section>
+
+          <section id="accessrequest" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Access review</div>
+            <h1>Someone asked for more access.</h1>
+            <div class="warning-card"><div class="section-label">Request from Aunt Lisa</div><p>Requested access to one document related to insurance follow-up.</p></div>
+            <div class="card"><div class="section-label">Why this request exists</div><p class="muted">Aunt Lisa is helping with one phone call and says the document would make that easier.</p></div>
+            <div class="btns"><button class="btn primary">Approve this one document</button><button class="btn secondary">Ask why this is needed</button><button class="btn ghost">Decline request</button></div>
+          </section>
+
+          <section id="notes" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Private notes</div>
+            <h1>Keep personal notes separate from shared work.</h1>
+            <div class="note-card"><div class="section-label">Funeral home follow-up</div><p>Need to ask about paperwork timing and copies.</p><span class="faint">Visible only to you</span></div>
+            <div class="note-card"><div class="section-label">Medication question</div><p>Call doctor’s office Monday morning.</p><span class="faint">Visible only to you</span></div>
+            <div class="btns"><button class="btn primary">New private note</button><button class="btn ghost next" data-next="home">Back to home</button></div>
+            <div class="footer-nav"><div>Home</div><div>People</div><div>Tasks</div><div>Support</div><div class="active-tab">Notes</div></div>
+          </section>
+
+          <section id="documents" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Documents</div>
+            <h1>Keep essential documents together.</h1>
+            <p class="muted">Documents start private, then can be shared one item at a time.</p>
+            <div class="list-card next" data-next="docdetail"><div class="section-label">Private</div><strong>Death certificate request form</strong><p class="muted">Uploaded today • related to records and official next steps</p></div>
+            <div class="list-card"><div class="section-label">Private</div><strong>Insurance policy summary</strong><p class="muted">Uploaded yesterday • not shared</p></div>
+            <div class="btns"><button class="btn primary">Upload document</button><button class="btn ghost next" data-next="home">Back to home</button></div>
+          </section>
+
+          <section id="docdetail" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Document detail</div>
+            <h1>Death certificate request form</h1>
+            <div class="card"><div class="section-label">Visibility</div><strong>Private</strong><p class="muted">Only you can see this right now.</p></div>
+            <div class="card"><div class="section-label">Use</div><strong>Records and official next steps</strong><p class="muted">This item can be shared later without exposing unrelated documents.</p></div>
+            <div class="btns"><button class="btn secondary next" data-next="docshare">Share access</button><button class="btn ghost next" data-next="documents">Back to documents</button></div>
+          </section>
+
+          <section id="docshare" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Share review</div>
+            <h1>Review document sharing before sending.</h1>
+            <div class="card"><div class="section-label">Share with</div><strong>Aunt Lisa</strong><p class="muted">Helper role • no other documents included</p></div>
+            <div class="soft-card"><div class="section-label">Only this item will be shared</div><p class="muted">Private notes, other documents, and unrelated tasks stay hidden.</p></div>
+            <div class="btns"><button class="btn primary">Share this document</button><button class="btn ghost next" data-next="docdetail">Cancel</button></div>
+          </section>
+
+          <section id="settings" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Settings</div>
+            <h1>Adjust the experience without losing control.</h1>
+            <div class="list-card"><div class="section-label">Account</div><strong>Sign-in and verification</strong><p class="muted">Email, password, and identity confirmation settings.</p></div>
+            <div class="list-card"><div class="section-label">Experience</div><strong>Language and reminders</strong><p class="muted">Text size, explanation style, and reminder frequency.</p></div>
+            <div class="list-card next" data-next="trust"><div class="section-label">Trust & privacy</div><strong>Visibility defaults and sharing approvals</strong><p class="muted">Review what stays private and what needs confirmation.</p></div>
+            <div class="list-card next" data-next="sharing"><div class="section-label">Sharing activity</div><strong>Review what left the space</strong><p class="muted">See requests and invites that involved sharing.</p></div>
+            <div class="footer-nav"><div>Home</div><div>People</div><div>Tasks</div><div>Support</div><div class="active-tab">Settings</div></div>
+          </section>
+
+          <section id="trust" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Trust controls</div>
+            <h1>Private by default, with clear exceptions.</h1>
+            <div class="soft-card"><ul><li>New tasks start private.</li><li>Notes start private.</li><li>Documents start private.</li><li>Support requests require review before sending.</li><li>Helpers cannot invite other people by default.</li></ul></div>
+            <div class="btns"><button class="btn secondary">Change default visibility</button><button class="btn primary next" data-next="settings">Done</button></div>
+          </section>
+
+          <section id="sharing" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Sharing activity</div>
+            <h1>See what was shared and when.</h1>
+            <div class="list-card"><div class="section-label">Support request shared</div><strong>Bereavement support request</strong><p class="muted">Today • approved by you • private notes were not included</p></div>
+            <div class="list-card"><div class="section-label">Invite sent</div><strong>Aunt Lisa invited as Helper</strong><p class="muted">Today • limited access • awaiting acceptance</p></div>
+            <div class="soft-card"><p class="muted">Private items that never left the space do not appear here.</p></div>
+            <div class="btns"><button class="btn primary next" data-next="settings">Back to settings</button></div>
+          </section>
+
+          <section id="offline" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Offline state</div>
+            <h1>You are offline right now.</h1>
+            <div class="warning-card"><p>Your latest edits were saved on this device. Zeporah will sync when the connection comes back.</p></div>
+            <div class="card"><div class="section-label">Saved locally</div><p class="muted">Draft task message, one private note, and your latest settings changes.</p></div>
+            <div class="btns"><button class="btn primary">Try again</button><button class="btn ghost next" data-next="home">Return home</button></div>
+          </section>
+
+          <section id="urgent" class="screen stack">
+            <div class="eyebrow"><span class="dot"></span> Safety guardrail</div>
+            <h1>Zeporah is not for emergencies.</h1>
+            <div class="danger-card"><p>If someone is in immediate danger, having a medical emergency, or at risk of self-harm, contact emergency services or a crisis line now.</p></div>
+            <div class="btns"><button class="btn primary">Call emergency services</button><button class="btn secondary">Open crisis resources</button><button class="btn ghost next" data-next="support">Back to support options</button></div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <aside class="inspector">
+      <h3>Review notes</h3>
+      <div id="notes"></div>
+    </aside>
+  </div>
+
+  <script>
+    const notesMap = {
+      welcome: ['Introduces the emotional tone and product promise.', 'Works as the founder-review entry point.', 'Still intentionally calm, not promotional.'],
+      privacy: ['Turns trust into visible product rules.', 'Useful for validation of the permission model.', 'Needs future legal/privacy copy review.'],
+      home: ['Core MVP dashboard state.', 'Shows main pillars clearly.', 'Useful for default first-run reviews.'],
+      emptyhome: ['Empty state for users who have not started any tasks.', 'Shows how the product behaves without generated structure.', 'Important for onboarding edge case.'],
+      task: ['Primary work state.', 'Balances progress with emotional sensitivity.', 'Can branch to pause or support.'],
+      taskpaused: ['Saved-progress confirmation state.', 'Reduces fear of losing work.', 'Important for interrupted sessions.'],
+      support: ['Support discovery state.', 'Adds urgent-help branch as a safety edge case.', 'Needs policy and partner review later.'],
+      requestpreview: ['Consent checkpoint before outbound sharing.', 'Clarifies allowed data scope.', 'Critical trust interaction.'],
+      requestsent: ['Post-send reassurance state.', 'Confirms limited data sharing.', 'Prevents ambiguity after outbound action.'],
+      requeststatus: ['Operational follow-up state.', 'Shows status without pretending full case management.', 'Good realism layer for MVP.'],
+      people: ['Main collaboration hub.', 'Centers least-privilege access.', 'Strong differentiator from generic task tools.'],
+      invite: ['Invite composition state.', 'Communicates bounded access before send.', 'Could later become a guided wizard.'],
+      permissions: ['Permission review state.', 'Shows role constraints clearly.', 'Supports future ACL model.'],
+      pendinginvite: ['Invite-sent state.', 'Useful for async collaboration edge case.', 'Prevents invisible system state.'],
+      accessrequest: ['Review flow for requested privilege expansion.', 'Important governance edge case.', 'Highlights explicit approval model.'],
+      notes: ['Private notes state.', 'Keeps emotional and practical details separate from shared work.', 'Reinforces privacy.'],
+      documents: ['Document library state.', 'First-class storage view for MVP.', 'Likely high-value utility area.'],
+      docdetail: ['Item-level privacy state.', 'Demonstrates granular control.', 'Supports later file preview.'],
+      docshare: ['Single-item share review.', 'Prevents accidental broader document exposure.', 'Strong trust microflow.'],
+      settings: ['Account and experience hub.', 'Connects preferences to trust controls.', 'Stable utility foundation.'],
+      trust: ['Encodes privacy defaults into settings.', 'Critical for product differentiation.', 'Needs future system explanation details.'],
+      sharing: ['Audit trail for outbound actions.', 'Builds confidence and transparency.', 'Should eventually support filtering.'],
+      offline: ['Connectivity edge case.', 'Explains local save behavior clearly.', 'Good for resilience narrative.'],
+      urgent: ['Safety guardrail state.', 'Prevents misuse of support request for emergency conditions.', 'Important compliance and trust surface.']
+    };
+
+    const screens = document.querySelectorAll('.screen');
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const nextButtons = document.querySelectorAll('.next');
+    const notes = document.getElementById('notes');
+
+    function renderNotes(id) {
+      const entries = notesMap[id] || [];
+      notes.innerHTML = entries.map(item => `<div class="note-item"><p class="muted" style="margin:0">${item}</p></div>`).join('');
+    }
+
+    function showScreen(id) {
+      screens.forEach(screen => screen.classList.toggle('active', screen.id === id));
+      navButtons.forEach(btn => btn.classList.toggle('active-nav', btn.dataset.target === id));
+      renderNotes(id);
+    }
+
+    navButtons.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.target)));
+    nextButtons.forEach(btn => btn.addEventListener('click', () => showScreen(btn.dataset.next)));
+    renderNotes('welcome');
+  </script>
+</body>
+</html>
